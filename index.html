@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Validator</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      color: var(--text);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: var(--muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      padding-right: 2.75rem;
+      background: #0f172a;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    input.valid {
+      border-color: var(--success);
+    }
+
+    input.invalid {
+      border-color: var(--error);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0.25rem;
+    }
+
+    .toggle-password:hover {
+      color: var(--text);
+    }
+
+    .feedback {
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+      min-height: 1.2rem;
+    }
+
+    .feedback.error {
+      color: var(--error);
+    }
+
+    .feedback.success {
+      color: var(--success);
+    }
+
+    .rules {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+    }
+
+    .rules h3 {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .rule {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .rule.met {
+      color: var(--success);
+    }
+
+    .rule .icon {
+      width: 16px;
+      text-align: center;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+
+    button[type="submit"]:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    button[type="submit"]:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .success-banner {
+      display: none;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 1.25rem;
+      font-weight: 500;
+    }
+
+    .success-banner.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>User Validator</h1>
+        <p>Create a valid username and password</p>
+      </div>
+
+      <form id="validatorForm" novalidate>
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <div class="input-wrapper">
+            <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
+          </div>
+          <div class="feedback" id="usernameFeedback"></div>
+        </div>
+
+        <div class="rules" id="usernameRules">
+          <h3>Username Rules</h3>
+          <div class="rule" id="rule-len"><span class="icon">○</span> At least 8 characters</div>
+          <div class="rule" id="rule-space"><span class="icon">○</span> No spaces</div>
+          <div class="rule" id="rule-digit"><span class="icon">○</span> No digits</div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="password" placeholder="Enter password" autocomplete="new-password" />
+            <button type="button" class="toggle-password" data-target="password" aria-label="Toggle password visibility">👁</button>
+          </div>
+          <div class="feedback" id="passwordFeedback"></div>
+        </div>
+
+        <div class="rules" id="passwordRules">
+          <h3>Password Rules</h3>
+          <div class="rule" id="rule-plen"><span class="icon">○</span> At least 7 characters</div>
+          <div class="rule" id="rule-pdigit"><span class="icon">○</span> At least one digit</div>
+          <div class="rule" id="rule-pupper"><span class="icon">○</span> At least one uppercase letter</div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirm">Confirm Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="confirm" placeholder="Confirm password" autocomplete="new-password" />
+            <button type="button" class="toggle-password" data-target="confirm" aria-label="Toggle password visibility">👁</button>
+          </div>
+          <div class="feedback" id="confirmFeedback"></div>
+        </div>
+
+        <button type="submit" id="submitBtn" disabled>Validate & Submit</button>
+      </form>
+
+      <div class="success-banner" id="successBanner">
+        ✓ All checks passed! Username and password are valid.
+      </div>
+    </div>
+
+    <p class="footer">Based on the User--Validator Python project</p>
+  </div>
+
+  <script>
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successBanner = document.getElementById('successBanner');
+
+    // Username validation
+    function validateUsername(value) {
+      const rules = {
+        len: value.length >= 8,
+        space: !value.includes(' '),
+        digit: !/[\d]/.test(value)
+      };
+
+      updateRule('rule-len', rules.len);
+      updateRule('rule-space', rules.space);
+      updateRule('rule-digit', rules.digit);
+
+      const isValid = rules.len && rules.space && rules.digit;
+      const feedback = document.getElementById('usernameFeedback');
+
+      if (!value) {
+        feedback.textContent = '';
+        usernameInput.classList.remove('valid', 'invalid');
+      } else if (isValid) {
+        feedback.textContent = 'Username is valid';
+        feedback.className = 'feedback success';
+        usernameInput.classList.add('valid');
+        usernameInput.classList.remove('invalid');
+      } else {
+        let msg = '';
+        if (!rules.len) msg = 'Username must be at least 8 characters long';
+        else if (!rules.space) msg = 'Username must not contain spaces';
+        else if (!rules.digit) msg = 'Username must not contain digits';
+        feedback.textContent = msg;
+        feedback.className = 'feedback error';
+        usernameInput.classList.add('invalid');
+        usernameInput.classList.remove('valid');
+      }
+
+      return isValid;
+    }
+
+    // Password validation
+    function validatePassword(value) {
+      const rules = {
+        len: value.length >= 7,
+        digit: /\d/.test(value),
+        upper: /[A-Z]/.test(value)
+      };
+
+      updateRule('rule-plen', rules.len);
+      updateRule('rule-pdigit', rules.digit);
+      updateRule('rule-pupper', rules.upper);
+
+      const isValid = rules.len && rules.digit && rules.upper;
+      const feedback = document.getElementById('passwordFeedback');
+
+      if (!value) {
+        feedback.textContent = '';
+        passwordInput.classList.remove('valid', 'invalid');
+      } else if (isValid) {
+        feedback.textContent = 'Password is valid';
+        feedback.className = 'feedback success';
+        passwordInput.classList.add('valid');
+        passwordInput.classList.remove('invalid');
+      } else {
+        let msg = '';
+        if (!rules.len) msg = 'Password must be at least 7 characters long';
+        else if (!rules.digit) msg = 'Password must contain at least one digit';
+        else if (!rules.upper) msg = 'Password must contain at least one uppercase letter';
+        feedback.textContent = msg;
+        feedback.className = 'feedback error';
+        passwordInput.classList.add('invalid');
+        passwordInput.classList.remove('valid');
+      }
+
+      return isValid;
+    }
+
+    // Confirm password
+    function validateConfirm(password, confirm) {
+      const feedback = document.getElementById('confirmFeedback');
+      const isValid = confirm.length > 0 && password === confirm;
+
+      if (!confirm) {
+        feedback.textContent = '';
+        confirmInput.classList.remove('valid', 'invalid');
+      } else if (isValid) {
+        feedback.textContent = 'Passwords match!';
+        feedback.className = 'feedback success';
+        confirmInput.classList.add('valid');
+        confirmInput.classList.remove('invalid');
+      } else {
+        feedback.textContent = 'Passwords do not match';
+        feedback.className = 'feedback error';
+        confirmInput.classList.add('invalid');
+        confirmInput.classList.remove('valid');
+      }
+
+      return isValid;
+    }
+
+    function updateRule(id, met) {
+      const el = document.getElementById(id);
+      el.classList.toggle('met', met);
+      el.querySelector('.icon').textContent = met ? '✓' : '○';
+    }
+
+    function checkAll() {
+      const uOk = validateUsername(usernameInput.value);
+      const pOk = validatePassword(passwordInput.value);
+      const cOk = validateConfirm(passwordInput.value, confirmInput.value);
+
+      submitBtn.disabled = !(uOk && pOk && cOk);
+      successBanner.classList.remove('show');
+    }
+
+    // Live validation
+    usernameInput.addEventListener('input', checkAll);
+    passwordInput.addEventListener('input', checkAll);
+    confirmInput.addEventListener('input', checkAll);
+
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        const isPassword = target.type === 'password';
+        target.type = isPassword ? 'text' : 'password';
+        btn.textContent = isPassword ? '🙈' : '👁';
+      });
+    });
+
+    // Submit
+    document.getElementById('validatorForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      successBanner.classList.add('show');
+      successBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
+</body>
+</html>
