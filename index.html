@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Validator</title>
+  <title>User Validator — Quiz Login</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -41,14 +41,10 @@
     }
 
     .header { text-align: center; margin-bottom: 1.5rem; }
-    .header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.35rem; }
     .header p { color: var(--muted); font-size: 0.9rem; }
 
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
 
     .tab {
       flex: 1;
@@ -213,8 +209,8 @@
   <div class="container">
     <div class="card">
       <div class="header">
-        <h1>User Validator</h1>
-        <p>Register or login with validated credentials</p>
+        <h1>Python Quiz</h1>
+        <p>Register or login to take the quiz</p>
       </div>
 
       <div class="tabs">
@@ -263,17 +259,17 @@
           <div class="feedback" id="confirmFeedback"></div>
         </div>
 
-        <button type="submit" id="submitBtn" disabled>Register</button>
+        <button type="submit" id="submitBtn" disabled>Register & Start Quiz</button>
       </form>
 
       <div class="banner" id="banner"></div>
     </div>
 
-    <p class="footer">Flask + SQLite backend · Passwords are hashed</p>
+    <p class="footer">Register once · Login anytime · Take the Python quiz</p>
   </div>
 
   <script>
-    const API = '';  // same origin when served by Flask
+    const API = '';
 
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -284,9 +280,8 @@
     const submitBtn = document.getElementById('submitBtn');
     const banner = document.getElementById('banner');
 
-    let mode = 'register';  // 'register' or 'login'
+    let mode = 'register';
 
-    // Tabs
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -297,13 +292,13 @@
           confirmGroup.classList.remove('hidden');
           usernameRules.classList.remove('hidden');
           passwordRules.classList.remove('hidden');
-          submitBtn.textContent = 'Register';
+          submitBtn.textContent = 'Register & Start Quiz';
           passwordInput.autocomplete = 'new-password';
         } else {
           confirmGroup.classList.add('hidden');
           usernameRules.classList.add('hidden');
           passwordRules.classList.add('hidden');
-          submitBtn.textContent = 'Login';
+          submitBtn.textContent = 'Login & Start Quiz';
           passwordInput.autocomplete = 'current-password';
         }
 
@@ -457,28 +452,27 @@
       try {
         const res = await fetch(API + endpoint, {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
         const data = await res.json();
 
         if (data.success) {
-          showBanner(data.message, 'success');
-          if (mode === 'register') {
-            usernameInput.value = '';
-            passwordInput.value = '';
-            confirmInput.value = '';
-            checkAll();
-          }
+          showBanner(data.message + ' Redirecting to quiz...', 'success');
+          setTimeout(() => {
+            window.location.href = data.redirect || '/quiz';
+          }, 800);
         } else {
           showBanner(data.error || 'Something went wrong', 'error');
+          submitBtn.textContent = mode === 'register' ? 'Register & Start Quiz' : 'Login & Start Quiz';
+          checkAll();
         }
       } catch (err) {
         showBanner('Cannot reach server. Is the backend running?', 'error');
+        submitBtn.textContent = mode === 'register' ? 'Register & Start Quiz' : 'Login & Start Quiz';
+        checkAll();
       }
-
-      submitBtn.textContent = mode === 'register' ? 'Register' : 'Login';
-      checkAll();
     });
   </script>
 </body>

@@ -1,79 +1,55 @@
-# User Validator
+# User Validator + Python Quiz
 
-A username and password validation tool with:
-- **Python CLI**
-- **Interactive web frontend**
-- **Flask backend** that stores users in SQLite (passwords are hashed)
+Register or login with validated credentials, then take an interactive Python basics quiz.
 
-## Rules
+## Features
 
-### Username
-- At least 8 characters long
-- Must not contain spaces
-- Must not contain digits
+- **Username & password validation** (same rules as before)
+- **Register / Login** with hashed passwords (SQLite)
+- **Python Quiz** — 10 multiple-choice questions
+- **Scores saved** per user in the database
+- Must be logged in to play the quiz
 
-### Password
-- At least 7 characters long
-- Must contain at least one digit
-- Must contain at least one uppercase letter
-- Special characters are allowed (but not required)
-- Must match the confirmation password (on register)
-
-## Quick Start (Backend + Frontend)
-
-### 1. Install dependencies
+## Quick Start
 
 ```bash
 pip install -r requirements.txt
+python3 app.py
 ```
 
-### 2. Run the server
+Open: **http://127.0.0.1:5000**
 
-```bash
-python app.py
-```
+1. Register a new account (or login)
+2. You’re taken to the quiz automatically
+3. Answer the questions and submit
+4. See your score
 
-### 3. Open in browser
+## Validation Rules
 
-Go to: **http://127.0.0.1:5000**
-
-You can:
-- **Register** a new user (validated + stored in SQLite)
-- **Login** with an existing user
-- See the list of registered usernames
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/register` | Register a new user |
-| POST | `/api/login` | Login with username + password |
-| GET | `/api/users` | List registered usernames |
-
-### Example register request
-
-```json
-{
-  "username": "johndoe",
-  "password": "Secret1",
-  "confirm": "Secret1"
-}
-```
+**Username:** 8+ characters, no spaces, no digits  
+**Password:** 7+ characters, at least one digit, at least one uppercase letter
 
 ## Project Structure
 
 ```
 User--Validator/
-├── app.py                  # Flask backend + SQLite
-├── index.html              # Interactive frontend
-├── username_password.py    # Original CLI version
+├── app.py                  # Flask backend (auth + quiz API)
+├── index.html              # Register / Login page
+├── quiz.html               # Interactive quiz
+├── username_password.py    # Original CLI validator
 ├── requirements.txt
-├── users.db                # Created automatically on first run
+├── users.db                # Created on first run
 └── README.md
 ```
 
-## Notes
+## API (overview)
 
-- Passwords are stored using **Werkzeug** password hashing (not plain text).
-- The database file `users.db` is created automatically when you first run `app.py`.
-- This is a learning/demo project — not production-ready security.
+| Endpoint | Description |
+|----------|-------------|
+| POST `/api/register` | Register + start session |
+| POST `/api/login` | Login + start session |
+| POST `/api/logout` | End session |
+| GET `/api/me` | Current user |
+| GET `/api/quiz/questions` | Quiz questions (login required) |
+| POST `/api/quiz/submit` | Submit answers, save score |
+| GET `/api/quiz/my-scores` | Your past scores |

@@ -1,14 +1,78 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
-import re
+from functools import wraps
 
 app = Flask(__name__, static_folder=".", static_url_path="")
-CORS(app)
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me-in-production")
+CORS(app, supports_credentials=True)
 
 DB_PATH = "users.db"
+
+QUESTIONS = [
+    {
+        "id": 1,
+        "question": "What is the output of the following code: print(2 + 3 * 4)?",
+        "options": {"a": "20", "b": "14", "c": "24"},
+        "answer": "b",
+    },
+    {
+        "id": 2,
+        "question": "What keyword is used to create a function in Python?",
+        "options": {"a": "def", "b": "function", "c": "create"},
+        "answer": "a",
+    },
+    {
+        "id": 3,
+        "question": "Which of the following is a mutable data type in Python?",
+        "options": {"a": "tuple", "b": "list", "c": "string"},
+        "answer": "b",
+    },
+    {
+        "id": 4,
+        "question": "What is the output of the following code: print(type([]))?",
+        "options": {"a": "<class 'list'>", "b": "<class 'tuple'>", "c": "<class 'dict'>"},
+        "answer": "a",
+    },
+    {
+        "id": 5,
+        "question": "What is the output of the following code: print(10 // 3)?",
+        "options": {"a": "3.3333", "b": "3", "c": "4"},
+        "answer": "b",
+    },
+    {
+        "id": 6,
+        "question": "Which function is used to display text or output on the screen?",
+        "options": {"a": "print()", "b": "input()", "c": "len()"},
+        "answer": "a",
+    },
+    {
+        "id": 7,
+        "question": "Which loop is commonly used to iterate through a sequence?",
+        "options": {"a": "while", "b": "for", "c": "do-while"},
+        "answer": "b",
+    },
+    {
+        "id": 8,
+        "question": "Which function is used to get input from a user?",
+        "options": {"a": "print()", "b": "input()", "c": "len()"},
+        "answer": "b",
+    },
+    {
+        "id": 9,
+        "question": "What is the output of the following code: print(len('Hello, World!'))?",
+        "options": {"a": "13", "b": "12", "c": "14"},
+        "answer": "a",
+    },
+    {
+        "id": 10,
+        "question": "Which data structure stores an ordered collection of items that can be changed?",
+        "options": {"a": "tuple", "b": "list", "c": "string"},
+        "answer": "b",
+    },
+]
 
 
 def get_db():
@@ -25,6 +89,17 @@ def init_db():
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS scores (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            score INTEGER NOT NULL,
+            total INTEGER NOT NULL,
+            percentage REAL NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
         )
     """)
     conn.commit()
@@ -51,9 +126,23 @@ def validate_password(password: str) -> tuple[bool, str]:
     return True, "Password is valid"
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user_id" not in session:
+            return jsonify({"success": False, "error": "Please log in first"}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+
 @app.route("/")
 def index():
     return send_from_directory(".", "index.html")
+
+
+@app.route("/quiz")
+def quiz_page():
+    return send_from_directory(".", "quiz.html")
 
 
 @app.route("/api/register", methods=["POST"])
@@ -63,21 +152,17 @@ def register():
     password = data.get("password") or ""
     confirm = data.get("confirm") or ""
 
-    # Validate username
     ok, msg = validate_username(username)
     if not ok:
         return jsonify({"success": False, "error": msg}), 400
 
-    # Validate password
     ok, msg = validate_password(password)
     if not ok:
         return jsonify({"success": False, "error": msg}), 400
 
-    # Confirm match
     if password != confirm:
         return jsonify({"success": False, "error": "Passwords do not match"}), 400
 
-    # Check if username already exists
     conn = get_db()
     existing = conn.execute(
         "SELECT id FROM users WHERE username = ?", (username,)
@@ -87,18 +172,23 @@ def register():
         conn.close()
         return jsonify({"success": False, "error": "Username already taken"}), 409
 
-    # Store user with hashed password
     password_hash = generate_password_hash(password)
-    conn.execute(
+    cursor = conn.execute(
         "INSERT INTO users (username, password_hash) VALUES (?, ?)",
         (username, password_hash),
     )
+    user_id = cursor.lastrowid
     conn.commit()
     conn.close()
 
+    session["user_id"] = user_id
+    session["username"] = username
+
     return jsonify({
         "success": True,
-        "message": f"User '{username}' registered successfully!"
+        "message": f"Welcome, {username}! You're registered.",
+        "username": username,
+        "redirect": "/quiz",
     }), 201
 
 
@@ -120,26 +210,115 @@ def login():
     if not user or not check_password_hash(user["password_hash"], password):
         return jsonify({"success": False, "error": "Invalid username or password"}), 401
 
+    session["user_id"] = user["id"]
+    session["username"] = user["username"]
+
     return jsonify({
         "success": True,
-        "message": f"Welcome back, {username}!"
+        "message": f"Welcome back, {username}!",
+        "username": username,
+        "redirect": "/quiz",
     })
 
 
-@app.route("/api/users", methods=["GET"])
-def list_users():
-    """List registered usernames (for demo purposes only)."""
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({"success": True, "message": "Logged out"})
+
+
+@app.route("/api/me", methods=["GET"])
+def me():
+    if "user_id" not in session:
+        return jsonify({"success": False, "logged_in": False}), 401
+    return jsonify({
+        "success": True,
+        "logged_in": True,
+        "username": session.get("username"),
+        "user_id": session.get("user_id"),
+    })
+
+
+@app.route("/api/quiz/questions", methods=["GET"])
+@login_required
+def get_questions():
+    # Return questions without answers
+    safe = [
+        {
+            "id": q["id"],
+            "question": q["question"],
+            "options": q["options"],
+        }
+        for q in QUESTIONS
+    ]
+    return jsonify({"success": True, "questions": safe, "total": len(safe)})
+
+
+@app.route("/api/quiz/submit", methods=["POST"])
+@login_required
+def submit_quiz():
+    data = request.get_json() or {}
+    answers = data.get("answers") or {}  # {"1": "b", "2": "a", ...}
+
+    score = 0
+    results = []
+
+    for q in QUESTIONS:
+        qid = str(q["id"])
+        user_ans = (answers.get(qid) or "").lower().strip()
+        correct = user_ans == q["answer"]
+        if correct:
+            score += 1
+        results.append({
+            "id": q["id"],
+            "correct": correct,
+            "your_answer": user_ans or None,
+            "correct_answer": q["answer"],
+        })
+
+    total = len(QUESTIONS)
+    percentage = round((score / total) * 100, 2) if total else 0
+
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO scores (user_id, score, total, percentage) VALUES (?, ?, ?, ?)",
+        (session["user_id"], score, total, percentage),
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "score": score,
+        "total": total,
+        "percentage": percentage,
+        "results": results,
+        "message": f"You scored {score}/{total} ({percentage}%)",
+    })
+
+
+@app.route("/api/quiz/my-scores", methods=["GET"])
+@login_required
+def my_scores():
     conn = get_db()
     rows = conn.execute(
-        "SELECT id, username, created_at FROM users ORDER BY created_at DESC"
+        """SELECT score, total, percentage, created_at
+           FROM scores WHERE user_id = ?
+           ORDER BY created_at DESC LIMIT 10""",
+        (session["user_id"],),
     ).fetchall()
     conn.close()
 
-    users = [
-        {"id": r["id"], "username": r["username"], "created_at": r["created_at"]}
+    scores = [
+        {
+            "score": r["score"],
+            "total": r["total"],
+            "percentage": r["percentage"],
+            "created_at": r["created_at"],
+        }
         for r in rows
     ]
-    return jsonify({"users": users, "count": len(users)})
+    return jsonify({"success": True, "scores": scores})
 
 
 if __name__ == "__main__":
