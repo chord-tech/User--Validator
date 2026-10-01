@@ -199,36 +199,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .users-section {
-      margin-top: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .users-section h3 {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .user-list {
-      list-style: none;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-
-    .user-list li {
-      padding: 0.4rem 0.6rem;
-      background: #0f172a;
-      border-radius: 6px;
-      margin-bottom: 0.35rem;
-      font-size: 0.85rem;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .user-list .date { color: var(--muted); font-size: 0.75rem; }
-
     .footer {
       text-align: center;
       margin-top: 1.25rem;
@@ -297,11 +267,6 @@
       </form>
 
       <div class="banner" id="banner"></div>
-
-      <div class="users-section" id="usersSection">
-        <h3>Registered Users <span id="userCount">(0)</span></h3>
-        <ul class="user-list" id="userList"></ul>
-      </div>
     </div>
 
     <p class="footer">Flask + SQLite backend · Passwords are hashed</p>
@@ -364,7 +329,6 @@
         feedback.textContent = '';
         usernameInput.classList.remove('valid', 'invalid');
       } else if (mode === 'login') {
-        // In login mode just require non-empty
         feedback.textContent = '';
         usernameInput.classList.remove('valid', 'invalid');
         return value.length > 0;
@@ -477,23 +441,6 @@
       banner.className = 'banner show ' + type;
     }
 
-    async function loadUsers() {
-      try {
-        const res = await fetch(API + '/api/users');
-        const data = await res.json();
-        const list = document.getElementById('userList');
-        const count = document.getElementById('userCount');
-        count.textContent = `(${data.count})`;
-        list.innerHTML = data.users.length
-          ? data.users.map(u =>
-              `<li><span>${u.username}</span><span class="date">${u.created_at || ''}</span></li>`
-            ).join('')
-          : '<li style="color:var(--muted)">No users yet</li>';
-      } catch (e) {
-        // Backend not running – ignore
-      }
-    }
-
     document.getElementById('validatorForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
@@ -522,7 +469,6 @@
             passwordInput.value = '';
             confirmInput.value = '';
             checkAll();
-            loadUsers();
           }
         } else {
           showBanner(data.error || 'Something went wrong', 'error');
@@ -534,9 +480,6 @@
       submitBtn.textContent = mode === 'register' ? 'Register' : 'Login';
       checkAll();
     });
-
-    // Initial load
-    loadUsers();
   </script>
 </body>
 </html>
