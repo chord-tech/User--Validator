@@ -1,6 +1,9 @@
 # User Validator
 
-A simple username and password validation tool with both a **Python CLI** and an **interactive web frontend**.
+A username and password validation tool with:
+- **Python CLI**
+- **Interactive web frontend**
+- **Flask backend** that stores users in SQLite (passwords are hashed)
 
 ## Rules
 
@@ -14,52 +17,63 @@ A simple username and password validation tool with both a **Python CLI** and an
 - Must contain at least one digit
 - Must contain at least one uppercase letter
 - Special characters are allowed (but not required)
-- Must match the confirmation password
+- Must match the confirmation password (on register)
 
-## How to Use
+## Quick Start (Backend + Frontend)
 
-### 1. Interactive Frontend (Recommended)
-
-Just open the `index.html` file in your browser:
+### 1. Install dependencies
 
 ```bash
-# Option A – double-click the file
-# Option B – from terminal
-open index.html          # macOS
-start index.html        # Windows
-xdg-open index.html     # Linux
+pip install -r requirements.txt
 ```
 
-Or serve it locally:
+### 2. Run the server
 
 ```bash
-python -m http.server 8000
-# then visit http://localhost:8000
+python app.py
 ```
 
-Features:
-- Real-time validation as you type
-- Visual rule checklist (✓ / ○)
-- Show/hide password toggle
-- Submit button only enables when everything is valid
+### 3. Open in browser
 
-### 2. Python CLI
+Go to: **http://127.0.0.1:5000**
 
-```bash
-python username_password.py
+You can:
+- **Register** a new user (validated + stored in SQLite)
+- **Login** with an existing user
+- See the list of registered usernames
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/register` | Register a new user |
+| POST | `/api/login` | Login with username + password |
+| GET | `/api/users` | List registered usernames |
+
+### Example register request
+
+```json
+{
+  "username": "johndoe",
+  "password": "Secret1",
+  "confirm": "Secret1"
+}
 ```
-
-Follow the prompts in the terminal.
 
 ## Project Structure
 
 ```
 User--Validator/
-├── index.html              # Interactive web frontend
-├── username_password.py    # Python CLI version
+├── app.py                  # Flask backend + SQLite
+├── index.html              # Interactive frontend
+├── username_password.py    # Original CLI version
+├── requirements.txt
+├── users.db                # Created automatically on first run
 └── README.md
 ```
 
-## License
+## Notes
 
-Free to use and modify.
+- Passwords are stored using **Werkzeug** password hashing (not plain text).
+- The database file `users.db` is created automatically when you first run `app.py`.
+- This is a learning/demo project — not production-ready security.
