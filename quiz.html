@@ -15,6 +15,7 @@
       --primary-hover: #2563eb;
       --success: #22c55e;
       --error: #ef4444;
+      --warning: #f59e0b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,6 +41,42 @@
 
     .topbar h1 { font-size: 1.4rem; }
     .topbar .user { color: var(--muted); font-size: 0.9rem; }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .timer {
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      min-width: 4.5rem;
+      text-align: center;
+    }
+
+    .timer.warn {
+      border-color: var(--warning);
+      color: var(--warning);
+      animation: pulse 1s ease infinite;
+    }
+
+    .timer.danger {
+      border-color: var(--error);
+      color: var(--error);
+      animation: pulse 0.6s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
 
     .btn {
       padding: 0.5rem 1rem;
@@ -203,7 +240,10 @@
         <h1>Python Quiz Game</h1>
         <div class="user" id="userLabel">Loading...</div>
       </div>
-      <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+      <div class="topbar-right">
+        <div class="timer hidden" id="timer">5:00</div>
+        <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+      </div>
     </div>
 
     <div id="loading" class="card loading">Loading quiz...</div>
@@ -233,6 +273,7 @@
           <div class="big" id="scoreBig">0/10</div>
           <div class="pct" id="scorePct">0%</div>
           <p style="margin-top: 0.75rem; color: var(--muted)" id="scoreMsg"></p>
+          <p style="margin-top: 0.35rem; color: var(--muted); font-size: 0.9rem" id="timeMsg"></p>
         </div>
         <div class="result-list" id="resultList"></div>
         <div class="nav" style="margin-top: 1.5rem">
@@ -244,14 +285,60 @@
   </div>
 
   <script>
+    const QUIZ_SECONDS = 5 * 60;  // 5 minutes
+
     let questions = [];
     let current = 0;
-    let answers = {};  // { "1": "b", ... }
+    let answers = {};
+    let timeLeft = QUIZ_SECONDS;
+    let timerId = null;
+    let submitting = false;
+    let timedOut = false;
 
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
+    }
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return m + ':' + String(s).padStart(2, '0');
+    }
+
+    function updateTimerDisplay() {
+      const el = document.getElementById('timer');
+      el.textContent = formatTime(timeLeft);
+      el.classList.remove('warn', 'danger');
+      if (timeLeft <= 30) el.classList.add('danger');
+      else if (timeLeft <= 60) el.classList.add('warn');
+    }
+
+    function startTimer() {
+      stopTimer();
+      timeLeft = QUIZ_SECONDS;
+      timedOut = false;
+      const el = document.getElementById('timer');
+      el.classList.remove('hidden');
+      updateTimerDisplay();
+
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          stopTimer();
+          timedOut = true;
+          submitQuiz(true);
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
     }
 
     async function checkAuth() {
@@ -284,6 +371,7 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('quizArea').classList.remove('hidden');
       renderQuestion();
+      startTimer();
     }
 
     function renderQuestion() {
@@ -320,23 +408,16 @@
       }
     }
 
-    document.getElementById('prevBtn').addEventListener('click', () => {
-      if (current > 0) {
-        current--;
-        renderQuestion();
-      }
-    });
+    async function submitQuiz(fromTimeout) {
+      if (submitting) return;
+      submitting = true;
+      stopTimer();
 
-    document.getElementById('nextBtn').addEventListener('click', async () => {
-      if (current < questions.length - 1) {
-        current++;
-        renderQuestion();
-        return;
-      }
-      // Submit
       const nextBtn = document.getElementById('nextBtn');
       nextBtn.disabled = true;
-      nextBtn.textContent = 'Submitting...';
+      nextBtn.textContent = fromTimeout ? 'Time\'s up! Submitting...' : 'Submitting...';
+
+      const usedSeconds = QUIZ_SECONDS - Math.max(0, timeLeft);
 
       try {
         const res = await fetch('/api/quiz/submit', {
@@ -349,10 +430,16 @@
 
         if (data.success) {
           document.getElementById('quizArea').classList.add('hidden');
+          document.getElementById('timer').classList.add('hidden');
           document.getElementById('resultArea').classList.remove('hidden');
           document.getElementById('scoreBig').textContent = `${data.score}/${data.total}`;
           document.getElementById('scorePct').textContent = `${data.percentage}%`;
-          document.getElementById('scoreMsg').textContent = data.message;
+
+          let msg = data.message;
+          if (fromTimeout) msg = 'Time ran out! ' + msg;
+          document.getElementById('scoreMsg').textContent = msg;
+          document.getElementById('timeMsg').textContent =
+            'Time used: ' + formatTime(usedSeconds) + ' / ' + formatTime(QUIZ_SECONDS);
 
           const list = document.getElementById('resultList');
           list.innerHTML = data.results.map(r => `
@@ -367,28 +454,50 @@
           alert(data.error || 'Submit failed');
           nextBtn.disabled = false;
           nextBtn.textContent = 'Submit Quiz';
+          submitting = false;
         }
       } catch {
         alert('Could not submit. Is the server running?');
         nextBtn.disabled = false;
         nextBtn.textContent = 'Submit Quiz';
+        submitting = false;
       }
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (current > 0) {
+        current--;
+        renderQuestion();
+      }
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', async () => {
+      if (current < questions.length - 1) {
+        current++;
+        renderQuestion();
+        return;
+      }
+      await submitQuiz(false);
     });
 
     document.getElementById('retryBtn').addEventListener('click', () => {
       current = 0;
       answers = {};
+      submitting = false;
       document.getElementById('resultArea').classList.add('hidden');
       document.getElementById('quizArea').classList.remove('hidden');
       document.getElementById('nextBtn').disabled = false;
       renderQuestion();
+      startTimer();
     });
 
     document.getElementById('homeBtn').addEventListener('click', () => {
+      stopTimer();
       window.location.href = '/';
     });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
+      stopTimer();
       await fetch('/api/logout', { method: 'POST', credentials: 'include' });
       window.location.href = '/';
     });
