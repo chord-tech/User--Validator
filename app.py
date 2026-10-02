@@ -1,4 +1,14 @@
-from flask import Flask, request, jsonify, send_from_directory, session
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    send_from_directory,
+    session,
+    redirect,
+    url_for,
+    flash,
+    get_flashed_messages,
+)
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
@@ -9,12 +19,11 @@ from functools import wraps
 app = Flask(__name__, static_folder=".", static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me-in-production")
 
-# Session cookie settings (local development)
 app.config.update(
     SESSION_COOKIE_NAME="pyquiz_session",
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=False,  # True only behind HTTPS
+    SESSION_COOKIE_SECURE=False,
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
 )
 
@@ -149,7 +158,7 @@ def login_required(f):
 def start_session(user_id, username):
     session.clear()
     session.permanent = True
-    session["user_id"] = user_id
+    session["user_id"] = int(user_id)
     session["username"] = username
 
 
@@ -160,8 +169,86 @@ def index():
 
 @app.route("/quiz")
 def quiz_page():
+    # If not logged in, send them home
+    if "user_id" not in session:
+        return redirect("/")
     return send_from_directory(".", "quiz.html")
 
+
+# ---------- Form POST (reliable redirect) ----------
+
+@app.route("/auth/register", methods=["POST"])
+def auth_register():
+    username = (request.form.get("username") or "").strip()
+    password = request.form.get("password") or ""
+    confirm = request.form.get("confirm") or ""
+
+    ok, msg = validate_username(username)
+    if not ok:
+        flash(msg, "error")
+        return redirect("/")
+
+    ok, msg = validate_password(password)
+    if not ok:
+        flash(msg, "error")
+        return redirect("/")
+
+    if password != confirm:
+        flash("Passwords do not match", "error")
+        return redirect("/")
+
+    conn = get_db()
+    existing = conn.execute(
+        "SELECT id FROM users WHERE username = ?", (username,)
+    ).fetchone()
+    if existing:
+        conn.close()
+        flash("Username already taken — try Sign in", "error")
+        return redirect("/")
+
+    password_hash = generate_password_hash(password)
+    cursor = conn.execute(
+        "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+        (username, password_hash),
+    )
+    user_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    start_session(user_id, username)
+    return redirect("/quiz")
+
+
+@app.route("/auth/login", methods=["POST"])
+def auth_login():
+    username = (request.form.get("username") or "").strip()
+    password = request.form.get("password") or ""
+
+    if not username or not password:
+        flash("Username and password required", "error")
+        return redirect("/")
+
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE username = ?", (username,)
+    ).fetchone()
+    conn.close()
+
+    if not user or not check_password_hash(user["password_hash"], password):
+        flash("Invalid username or password", "error")
+        return redirect("/")
+
+    start_session(user["id"], user["username"])
+    return redirect("/quiz")
+
+
+@app.route("/api/flash", methods=["GET"])
+def api_flash():
+    messages = get_flashed_messages(with_categories=True)
+    return jsonify({"messages": [{"category": c, "text": t} for c, t in messages]})
+
+
+# ---------- JSON API (kept for quiz) ----------
 
 @app.route("/api/register", methods=["POST"])
 def register():
@@ -185,7 +272,6 @@ def register():
     existing = conn.execute(
         "SELECT id FROM users WHERE username = ?", (username,)
     ).fetchone()
-
     if existing:
         conn.close()
         return jsonify({"success": False, "error": "Username already taken"}), 409
@@ -200,10 +286,9 @@ def register():
     conn.close()
 
     start_session(user_id, username)
-
     return jsonify({
         "success": True,
-        "message": f"Welcome, {username}! You're registered.",
+        "message": f"Welcome, {username}!",
         "username": username,
         "redirect": "/quiz",
     }), 201
@@ -228,7 +313,6 @@ def login():
         return jsonify({"success": False, "error": "Invalid username or password"}), 401
 
     start_session(user["id"], user["username"])
-
     return jsonify({
         "success": True,
         "message": f"Welcome back, {username}!",
@@ -259,11 +343,7 @@ def me():
 @login_required
 def get_questions():
     safe = [
-        {
-            "id": q["id"],
-            "question": q["question"],
-            "options": q["options"],
-        }
+        {"id": q["id"], "question": q["question"], "options": q["options"]}
         for q in QUESTIONS
     ]
     return jsonify({"success": True, "questions": safe, "total": len(safe)})
@@ -277,7 +357,6 @@ def submit_quiz():
 
     score = 0
     results = []
-
     for q in QUESTIONS:
         qid = str(q["id"])
         user_ans = (answers.get(qid) or "").lower().strip()
@@ -323,7 +402,6 @@ def my_scores():
         (session["user_id"],),
     ).fetchall()
     conn.close()
-
     scores = [
         {
             "score": r["score"],
@@ -338,5 +416,5 @@ def my_scores():
 
 if __name__ == "__main__":
     init_db()
-    print("Database ready. Starting server at http://127.0.0.1:5000")
+    print("Database ready. Open http://127.0.0.1:5000")
     app.run(debug=True, port=5000)

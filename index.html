@@ -19,19 +19,15 @@
       --text-tertiary: #71717a;
       --primary: #6366f1;
       --primary-hover: #818cf8;
-      --primary-muted: rgba(99, 102, 241, 0.15);
       --success: #22c55e;
       --success-muted: rgba(34, 197, 94, 0.12);
       --error: #ef4444;
       --error-muted: rgba(239, 68, 68, 0.12);
       --ring: rgba(99, 102, 241, 0.4);
-      --radius: 12px;
-      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.6);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: var(--font);
       background: var(--bg);
@@ -42,256 +38,111 @@
       padding: 24px 16px;
       -webkit-font-smoothing: antialiased;
     }
-
     .bg-mesh {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 60% 50% at 50% -20%, rgba(99, 102, 241, 0.2), transparent),
-        radial-gradient(ellipse 40% 30% at 100% 50%, rgba(99, 102, 241, 0.06), transparent),
-        radial-gradient(ellipse 40% 30% at 0% 80%, rgba(34, 197, 94, 0.04), transparent);
+      position: fixed; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 60% 50% at 50% -20%, rgba(99,102,241,0.2), transparent);
     }
-
-    .shell {
-      position: relative;
-      width: 100%;
-      max-width: 400px;
-      z-index: 1;
-    }
-
-    .brand {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
+    .shell { position: relative; width: 100%; max-width: 400px; z-index: 1; }
+    .brand { text-align: center; margin-bottom: 32px; }
     .brand-mark {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(145deg, #6366f1 0%, #4f46e5 100%);
-      margin-bottom: 16px;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(145deg, #6366f1, #4f46e5);
+      margin-bottom: 16px; box-shadow: 0 4px 20px rgba(99,102,241,0.35);
     }
-
     .brand-mark svg { width: 24px; height: 24px; }
-
-    .brand h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.2;
-    }
-
-    .brand p {
-      margin-top: 8px;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
+    .brand h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.04em; }
+    .brand p { margin-top: 8px; font-size: 0.875rem; color: var(--text-secondary); }
     .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px 24px;
-      box-shadow: var(--shadow);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px 24px; box-shadow: var(--shadow);
     }
-
     .segment {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      padding: 4px;
-      background: var(--surface-2);
-      border-radius: 10px;
-      border: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;
+      background: var(--surface-2); border-radius: 10px; border: 1px solid var(--border);
       margin-bottom: 24px;
     }
-
     .segment button {
-      appearance: none;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      padding: 10px 12px;
-      border-radius: 7px;
-      cursor: pointer;
-      transition: color 0.15s, background 0.15s, box-shadow 0.15s;
+      appearance: none; border: none; background: transparent;
+      color: var(--text-secondary); font-family: var(--font);
+      font-size: 0.8125rem; font-weight: 600; padding: 10px 12px;
+      border-radius: 7px; cursor: pointer;
     }
-
     .segment button[aria-selected="true"] {
-      background: var(--surface);
-      color: var(--text);
+      background: var(--surface); color: var(--text);
       box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px var(--border);
     }
-
-    .segment button:not([aria-selected="true"]):hover {
-      color: var(--text);
-    }
-
     .field { margin-bottom: 16px; }
-
     .field label {
-      display: block;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
+      display: block; font-size: 0.8125rem; font-weight: 500;
+      color: var(--text-secondary); margin-bottom: 6px;
     }
-
     .input-wrap { position: relative; }
-
     .field input {
-      width: 100%;
-      height: 44px;
-      padding: 0 14px;
-      padding-right: 44px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 0.9375rem;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%; height: 44px; padding: 0 14px; padding-right: 44px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: var(--font); font-size: 0.9375rem;
     }
-
-    .field input::placeholder { color: var(--text-tertiary); }
-    .field input:hover { border-color: var(--border-strong); }
     .field input:focus {
-      outline: none;
-      border-color: var(--primary);
+      outline: none; border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--ring);
     }
     .field input.is-valid { border-color: var(--success); }
     .field input.is-invalid { border-color: var(--error); }
-
     .eye {
-      position: absolute;
-      right: 6px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
-      display: grid;
-      place-items: center;
-      border: none;
-      background: transparent;
-      color: var(--text-tertiary);
-      cursor: pointer;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+      width: 32px; height: 32px; display: grid; place-items: center;
+      border: none; background: transparent; color: var(--text-tertiary);
+      cursor: pointer; border-radius: 6px;
     }
-    .eye:hover {
-      color: var(--text-secondary);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .hint {
-      font-size: 0.75rem;
-      margin-top: 6px;
-      min-height: 1.1em;
-      line-height: 1.3;
-    }
+    .hint { font-size: 0.75rem; margin-top: 6px; min-height: 1.1em; }
     .hint.ok { color: var(--success); }
     .hint.err { color: var(--error); }
-
     .checklist {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;
     }
     .checklist-title {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-tertiary);
-      margin-bottom: 8px;
+      font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 8px;
     }
     .check-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8125rem;
-      color: var(--text-tertiary);
-      margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8125rem; color: var(--text-tertiary); margin-bottom: 4px;
     }
-    .check-item:last-child { margin-bottom: 0; }
     .check-item.done { color: var(--success); }
     .check-item .mark {
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
+      width: 16px; height: 16px; border-radius: 999px;
       border: 1.5px solid var(--border-strong);
-      display: grid;
-      place-items: center;
-      font-size: 0.6rem;
-      flex-shrink: 0;
+      display: grid; place-items: center; font-size: 0.6rem;
     }
     .check-item.done .mark {
-      background: var(--success-muted);
-      border-color: var(--success);
-      color: var(--success);
+      background: var(--success-muted); border-color: var(--success); color: var(--success);
     }
-
     .submit {
-      width: 100%;
-      height: 44px;
-      margin-top: 8px;
-      border: none;
-      border-radius: 10px;
-      background: var(--primary);
-      color: white;
-      font-family: var(--font);
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
+      width: 100%; height: 44px; margin-top: 8px; border: none; border-radius: 10px;
+      background: var(--primary); color: white; font-family: var(--font);
+      font-size: 0.875rem; font-weight: 600; cursor: pointer;
     }
     .submit:hover:not(:disabled) { background: var(--primary-hover); }
     .submit:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .toast {
-      display: none;
-      margin-top: 16px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      text-align: center;
+      display: none; margin-top: 16px; padding: 12px 14px; border-radius: 10px;
+      font-size: 0.8125rem; font-weight: 500; text-align: center;
     }
     .toast.show { display: block; }
     .toast.ok {
-      background: var(--success-muted);
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      color: var(--success);
+      background: var(--success-muted); border: 1px solid rgba(34,197,94,0.25); color: var(--success);
     }
     .toast.err {
-      background: var(--error-muted);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: var(--error);
+      background: var(--error-muted); border: 1px solid rgba(239,68,68,0.25); color: var(--error);
     }
-
-    .meta {
-      margin-top: 24px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-    }
+    .meta { margin-top: 24px; text-align: center; font-size: 0.75rem; color: var(--text-tertiary); }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
   <div class="bg-mesh" aria-hidden="true"></div>
-
   <div class="shell">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">
@@ -310,11 +161,12 @@
         <button type="button" role="tab" data-mode="login" aria-selected="false">Sign in</button>
       </div>
 
-      <form id="validatorForm" novalidate>
+      <!-- Real form POST → server redirects to /quiz -->
+      <form id="validatorForm" method="post" action="/auth/register" novalidate>
         <div class="field">
           <label for="username">Username</label>
           <div class="input-wrap">
-            <input id="username" type="text" placeholder="Choose a username" autocomplete="username" />
+            <input id="username" name="username" type="text" placeholder="Choose a username" autocomplete="username" required />
           </div>
           <div class="hint" id="usernameFeedback"></div>
         </div>
@@ -329,7 +181,7 @@
         <div class="field">
           <label for="password">Password</label>
           <div class="input-wrap">
-            <input id="password" type="password" placeholder="Create a password" autocomplete="new-password" />
+            <input id="password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required />
             <button type="button" class="eye" data-target="password" aria-label="Show password">👁</button>
           </div>
           <div class="hint" id="passwordFeedback"></div>
@@ -345,22 +197,22 @@
         <div class="field" id="confirmGroup">
           <label for="confirm">Confirm password</label>
           <div class="input-wrap">
-            <input id="confirm" type="password" placeholder="Repeat password" autocomplete="new-password" />
+            <input id="confirm" name="confirm" type="password" placeholder="Repeat password" autocomplete="new-password" />
             <button type="button" class="eye" data-target="confirm" aria-label="Show password">👁</button>
           </div>
           <div class="hint" id="confirmFeedback"></div>
         </div>
 
-        <button type="submit" class="submit" id="submitBtn" disabled>Create account & start</button>
+        <button type="submit" class="submit" id="submitBtn" disabled>Create account &amp; start</button>
       </form>
 
       <div class="toast" id="banner" role="status"></div>
     </div>
-
     <p class="meta">10 questions · 5 min timer · Progress saved</p>
   </div>
 
   <script>
+    const form = document.getElementById('validatorForm');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const confirmInput = document.getElementById('confirm');
@@ -371,6 +223,15 @@
     const banner = document.getElementById('banner');
     let mode = 'register';
 
+    // Show flash errors from server (e.g. wrong password)
+    fetch('/api/flash').then(r => r.json()).then(data => {
+      const msg = (data.messages || [])[0];
+      if (msg) {
+        banner.textContent = msg.text;
+        banner.className = 'toast show ' + (msg.category === 'error' ? 'err' : 'ok');
+      }
+    }).catch(() => {});
+
     document.querySelectorAll('.segment button').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.segment button').forEach(t => t.setAttribute('aria-selected', 'false'));
@@ -378,19 +239,22 @@
         mode = tab.dataset.mode;
 
         if (mode === 'register') {
+          form.action = '/auth/register';
           confirmGroup.classList.remove('hidden');
           usernameRules.classList.remove('hidden');
           passwordRules.classList.remove('hidden');
           submitBtn.textContent = 'Create account & start';
           passwordInput.autocomplete = 'new-password';
-          passwordInput.placeholder = 'Create a password';
+          confirmInput.required = true;
         } else {
+          form.action = '/auth/login';
           confirmGroup.classList.add('hidden');
           usernameRules.classList.add('hidden');
           passwordRules.classList.add('hidden');
           submitBtn.textContent = 'Sign in & start';
           passwordInput.autocomplete = 'current-password';
-          passwordInput.placeholder = 'Enter your password';
+          confirmInput.required = false;
+          confirmInput.value = '';
         }
         banner.classList.remove('show');
         checkAll();
@@ -405,11 +269,7 @@
     }
 
     function validateUsername(value) {
-      const rules = {
-        len: value.length >= 8,
-        space: !value.includes(' '),
-        digit: !/\d/.test(value)
-      };
+      const rules = { len: value.length >= 8, space: !value.includes(' '), digit: !/\d/.test(value) };
       setRule('rule-len', rules.len);
       setRule('rule-space', rules.space);
       setRule('rule-digit', rules.digit);
@@ -417,26 +277,17 @@
       const fb = document.getElementById('usernameFeedback');
       usernameInput.classList.remove('is-valid', 'is-invalid');
       if (!value) { fb.textContent = ''; fb.className = 'hint'; }
-      else if (mode === 'login') { fb.textContent = ''; fb.className = 'hint'; return value.length > 0; }
-      else if (ok) {
-        fb.textContent = 'Looks good';
-        fb.className = 'hint ok';
-        usernameInput.classList.add('is-valid');
-      } else {
-        fb.textContent = !rules.len ? 'Need at least 8 characters'
-          : !rules.space ? 'Spaces are not allowed' : 'Numbers are not allowed';
-        fb.className = 'hint err';
-        usernameInput.classList.add('is-invalid');
+      else if (mode === 'login') { fb.textContent = ''; return value.length > 0; }
+      else if (ok) { fb.textContent = 'Looks good'; fb.className = 'hint ok'; usernameInput.classList.add('is-valid'); }
+      else {
+        fb.textContent = !rules.len ? 'Need 8+ characters' : !rules.space ? 'No spaces' : 'No numbers';
+        fb.className = 'hint err'; usernameInput.classList.add('is-invalid');
       }
       return mode === 'login' ? value.length > 0 : ok;
     }
 
     function validatePassword(value) {
-      const rules = {
-        len: value.length >= 7,
-        digit: /\d/.test(value),
-        upper: /[A-Z]/.test(value)
-      };
+      const rules = { len: value.length >= 7, digit: /\d/.test(value), upper: /[A-Z]/.test(value) };
       setRule('rule-plen', rules.len);
       setRule('rule-pdigit', rules.digit);
       setRule('rule-pupper', rules.upper);
@@ -444,16 +295,11 @@
       const fb = document.getElementById('passwordFeedback');
       passwordInput.classList.remove('is-valid', 'is-invalid');
       if (!value) { fb.textContent = ''; fb.className = 'hint'; }
-      else if (mode === 'login') { fb.textContent = ''; fb.className = 'hint'; return value.length > 0; }
-      else if (ok) {
-        fb.textContent = 'Password meets requirements';
-        fb.className = 'hint ok';
-        passwordInput.classList.add('is-valid');
-      } else {
-        fb.textContent = !rules.len ? 'Need at least 7 characters'
-          : !rules.digit ? 'Add at least one number' : 'Add an uppercase letter';
-        fb.className = 'hint err';
-        passwordInput.classList.add('is-invalid');
+      else if (mode === 'login') { fb.textContent = ''; return value.length > 0; }
+      else if (ok) { fb.textContent = 'Meets requirements'; fb.className = 'hint ok'; passwordInput.classList.add('is-valid'); }
+      else {
+        fb.textContent = !rules.len ? 'Need 7+ characters' : !rules.digit ? 'Add a number' : 'Add uppercase';
+        fb.className = 'hint err'; passwordInput.classList.add('is-invalid');
       }
       return mode === 'login' ? value.length > 0 : ok;
     }
@@ -464,24 +310,17 @@
       const ok = confirm.length > 0 && password === confirm;
       confirmInput.classList.remove('is-valid', 'is-invalid');
       if (!confirm) { fb.textContent = ''; fb.className = 'hint'; }
-      else if (ok) {
-        fb.textContent = 'Passwords match';
-        fb.className = 'hint ok';
-        confirmInput.classList.add('is-valid');
-      } else {
-        fb.textContent = 'Passwords do not match';
-        fb.className = 'hint err';
-        confirmInput.classList.add('is-invalid');
-      }
+      else if (ok) { fb.textContent = 'Match'; fb.className = 'hint ok'; confirmInput.classList.add('is-valid'); }
+      else { fb.textContent = 'Do not match'; fb.className = 'hint err'; confirmInput.classList.add('is-invalid'); }
       return ok;
     }
 
     function checkAll() {
-      const u = validateUsername(usernameInput.value);
-      const p = validatePassword(passwordInput.value);
-      const c = validateConfirm(passwordInput.value, confirmInput.value);
-      submitBtn.disabled = !(u && p && c);
-      banner.classList.remove('show');
+      submitBtn.disabled = !(
+        validateUsername(usernameInput.value) &&
+        validatePassword(passwordInput.value) &&
+        validateConfirm(passwordInput.value, confirmInput.value)
+      );
     }
 
     usernameInput.addEventListener('input', checkAll);
@@ -497,46 +336,17 @@
       });
     });
 
-    function showToast(msg, type) {
-      banner.textContent = msg;
-      banner.className = 'toast show ' + (type === 'success' ? 'ok' : 'err');
-    }
-
-    document.getElementById('validatorForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = mode === 'register' ? 'Creating account…' : 'Signing in…';
-
-      try {
-        const res = await fetch(mode === 'register' ? '/api/register' : '/api/login', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: usernameInput.value.trim(),
-            password: passwordInput.value,
-            confirm: confirmInput.value
-          })
-        });
-
-        let data = {};
-        try { data = await res.json(); } catch (_) {}
-
-        if (res.ok && data.success) {
-          showToast((data.message || 'Success') + ' Opening quiz…', 'success');
-          // Go to quiz right away (session cookie is set on this response)
-          window.location.assign(data.redirect || '/quiz');
-          return;
-        }
-
-        showToast(data.error || ('Request failed (' + res.status + ')'), 'error');
-        submitBtn.textContent = mode === 'register' ? 'Create account & start' : 'Sign in & start';
-        checkAll();
-      } catch (err) {
-        showToast('Server unavailable. Use http://127.0.0.1:5000 (not a file:// page).', 'error');
-        submitBtn.textContent = mode === 'register' ? 'Create account & start' : 'Sign in & start';
-        checkAll();
+    // Allow normal form submit only when valid — browser navigates to /quiz via server redirect
+    form.addEventListener('submit', (e) => {
+      checkAll();
+      if (submitBtn.disabled) {
+        e.preventDefault();
+        banner.textContent = 'Please fix the form errors first';
+        banner.className = 'toast show err';
+        return;
       }
+      submitBtn.textContent = mode === 'register' ? 'Creating…' : 'Signing in…';
+      // do NOT preventDefault — form POSTs to /auth/login or /auth/register
     });
   </script>
 </body>
