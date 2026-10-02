@@ -3,76 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Validator — Quiz Login</title>
+  <title>Py Quiz Game — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --border: #334155;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --success: #22c55e;
-      --error: #ef4444;
+      --bg-deep: #070b14;
+      --bg: #0c1220;
+      --card: rgba(18, 28, 48, 0.85);
+      --card-border: rgba(99, 140, 255, 0.12);
+      --border: #243044;
+      --text: #e8eef9;
+      --muted: #8b9bb8;
+      --primary: #4f8cff;
+      --primary-glow: rgba(79, 140, 255, 0.35);
+      --primary-hover: #3b7aef;
+      --accent: #3ddc97;
+      --success: #3ddc97;
+      --error: #ff6b7a;
+      --radius: 18px;
+      --font: 'DM Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      font-family: var(--font);
+      background: var(--bg-deep);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
       color: var(--text);
+      position: relative;
+      overflow-x: hidden;
     }
 
-    .container { width: 100%; max-width: 420px; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(79, 140, 255, 0.18), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 90% 100%, rgba(61, 220, 151, 0.1), transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #4f8cff, #3066d0);
+      box-shadow: 0 8px 24px var(--primary-glow);
+      margin-bottom: 1rem;
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: white;
+    }
+
+    .brand h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.35rem;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
 
     .card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.75rem 1.6rem;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 24px 48px -16px rgba(0, 0, 0, 0.55);
     }
 
-    .header { text-align: center; margin-bottom: 1.5rem; }
-    .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.35rem; }
-    .header p { color: var(--muted); font-size: 0.9rem; }
-
-    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .tabs {
+      display: flex;
+      padding: 4px;
+      background: rgba(7, 11, 20, 0.6);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
 
     .tab {
       flex: 1;
-      padding: 0.6rem;
-      background: #0f172a;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
+      padding: 0.65rem;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
       color: var(--muted);
+      font-family: var(--font);
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .tab.active {
       background: var(--primary);
-      border-color: var(--primary);
       color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
     }
 
-    .form-group { margin-bottom: 1.25rem; }
+    .tab:not(.active):hover {
+      color: var(--text);
+    }
+
+    .form-group { margin-bottom: 1.1rem; }
 
     label {
       display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
+      font-size: 0.8rem;
+      font-weight: 600;
       margin-bottom: 0.4rem;
       color: var(--muted);
+      letter-spacing: 0.02em;
     }
 
     .input-wrapper { position: relative; }
@@ -80,20 +155,23 @@
     input[type="text"],
     input[type="password"] {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.8rem 1rem;
       padding-right: 2.75rem;
-      background: #0f172a;
+      background: rgba(7, 11, 20, 0.7);
       border: 1.5px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       color: var(--text);
+      font-family: var(--font);
       font-size: 0.95rem;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
+    input::placeholder { color: #5a6a85; }
+
     input:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      box-shadow: 0 0 0 3px var(--primary-glow);
     }
 
     input.valid { border-color: var(--success); }
@@ -101,134 +179,182 @@
 
     .toggle-password {
       position: absolute;
-      right: 0.75rem;
+      right: 0.65rem;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
       color: var(--muted);
       cursor: pointer;
-      font-size: 1.1rem;
-      padding: 0.25rem;
+      font-size: 1rem;
+      padding: 0.35rem;
+      line-height: 1;
+      border-radius: 6px;
     }
 
-    .toggle-password:hover { color: var(--text); }
+    .toggle-password:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
 
     .feedback {
-      font-size: 0.8rem;
-      margin-top: 0.4rem;
-      min-height: 1.2rem;
+      font-size: 0.78rem;
+      margin-top: 0.35rem;
+      min-height: 1.1rem;
     }
 
     .feedback.error { color: var(--error); }
     .feedback.success { color: var(--success); }
 
     .rules {
-      background: #0f172a;
-      border-radius: 10px;
-      padding: 0.9rem 1rem;
-      margin-bottom: 1.25rem;
+      background: rgba(7, 11, 20, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.1rem;
       font-size: 0.8rem;
     }
 
     .rules h3 {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.55rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
+      font-weight: 600;
     }
 
     .rule {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.28rem;
       color: var(--muted);
       transition: color 0.2s;
     }
 
+    .rule:last-child { margin-bottom: 0; }
     .rule.met { color: var(--success); }
-    .rule .icon { width: 16px; text-align: center; }
+
+    .rule .icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
+    }
+
+    .rule.met .icon {
+      background: rgba(61, 220, 151, 0.2);
+    }
 
     button[type="submit"] {
       width: 100%;
-      padding: 0.85rem;
-      background: var(--primary);
+      padding: 0.9rem;
+      background: linear-gradient(145deg, #5a95ff, #3b7aef);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 1rem;
+      border-radius: 12px;
+      font-family: var(--font);
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      margin-top: 0.5rem;
+      transition: transform 0.12s, box-shadow 0.2s, opacity 0.2s;
+      margin-top: 0.35rem;
+      box-shadow: 0 6px 20px var(--primary-glow);
     }
 
-    button[type="submit"]:hover:not(:disabled) { background: var(--primary-hover); }
-    button[type="submit"]:active:not(:disabled) { transform: scale(0.98); }
-    button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+    button[type="submit"]:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px var(--primary-glow);
+    }
+
+    button[type="submit"]:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 
     .banner {
       display: none;
-      border-radius: 10px;
-      padding: 1rem;
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
       text-align: center;
-      margin-top: 1.25rem;
+      margin-top: 1.15rem;
       font-weight: 500;
+      font-size: 0.9rem;
     }
 
-    .banner.show { display: block; animation: fadeIn 0.3s ease; }
+    .banner.show {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+
     .banner.success {
-      background: rgba(34, 197, 94, 0.15);
-      border: 1px solid var(--success);
+      background: rgba(61, 220, 151, 0.12);
+      border: 1px solid rgba(61, 220, 151, 0.35);
       color: var(--success);
     }
+
     .banner.error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid var(--error);
+      background: rgba(255, 107, 122, 0.12);
+      border: 1px solid rgba(255, 107, 122, 0.35);
       color: var(--error);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-8px); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .footer {
       text-align: center;
-      margin-top: 1.25rem;
-      font-size: 0.75rem;
+      margin-top: 1.35rem;
+      font-size: 0.78rem;
       color: var(--muted);
     }
 
     .hidden { display: none !important; }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.4rem 1.2rem; }
+      .brand h1 { font-size: 1.4rem; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="card">
-      <div class="header">
-        <h1>Python Quiz</h1>
-        <p>Register or login to take the quiz</p>
-      </div>
+    <div class="brand">
+      <div class="logo">Py</div>
+      <h1>Py Quiz Game</h1>
+      <p>Test your Python basics — register or log in to play</p>
+    </div>
 
+    <div class="card">
       <div class="tabs">
-        <button class="tab active" data-mode="register">Register</button>
-        <button class="tab" data-mode="login">Login</button>
+        <button type="button" class="tab active" data-mode="register">Register</button>
+        <button type="button" class="tab" data-mode="login">Login</button>
       </div>
 
       <form id="validatorForm" novalidate>
         <div class="form-group">
           <label for="username">Username</label>
           <div class="input-wrapper">
-            <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
+            <input type="text" id="username" placeholder="e.g. johndoe" autocomplete="username" />
           </div>
           <div class="feedback" id="usernameFeedback"></div>
         </div>
 
         <div class="rules" id="usernameRules">
-          <h3>Username Rules</h3>
+          <h3>Username rules</h3>
           <div class="rule" id="rule-len"><span class="icon">○</span> At least 8 characters</div>
           <div class="rule" id="rule-space"><span class="icon">○</span> No spaces</div>
           <div class="rule" id="rule-digit"><span class="icon">○</span> No digits</div>
@@ -244,14 +370,14 @@
         </div>
 
         <div class="rules" id="passwordRules">
-          <h3>Password Rules</h3>
+          <h3>Password rules</h3>
           <div class="rule" id="rule-plen"><span class="icon">○</span> At least 7 characters</div>
           <div class="rule" id="rule-pdigit"><span class="icon">○</span> At least one digit</div>
           <div class="rule" id="rule-pupper"><span class="icon">○</span> At least one uppercase letter</div>
         </div>
 
         <div class="form-group" id="confirmGroup">
-          <label for="confirm">Confirm Password</label>
+          <label for="confirm">Confirm password</label>
           <div class="input-wrapper">
             <input type="password" id="confirm" placeholder="Confirm password" autocomplete="new-password" />
             <button type="button" class="toggle-password" data-target="confirm" aria-label="Toggle visibility">👁</button>
@@ -259,18 +385,17 @@
           <div class="feedback" id="confirmFeedback"></div>
         </div>
 
-        <button type="submit" id="submitBtn" disabled>Register & Start Quiz</button>
+        <button type="submit" id="submitBtn" disabled>Register &amp; Start Quiz</button>
       </form>
 
       <div class="banner" id="banner"></div>
     </div>
 
-    <p class="footer">Register once · Login anytime · Take the Python quiz</p>
+    <p class="footer">10 questions · 5 minute timer · Scores saved</p>
   </div>
 
   <script>
     const API = '';
-
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const confirmInput = document.getElementById('confirm');
@@ -279,7 +404,6 @@
     const passwordRules = document.getElementById('passwordRules');
     const submitBtn = document.getElementById('submitBtn');
     const banner = document.getElementById('banner');
-
     let mode = 'register';
 
     document.querySelectorAll('.tab').forEach(tab => {
@@ -301,7 +425,6 @@
           submitBtn.textContent = 'Login & Start Quiz';
           passwordInput.autocomplete = 'current-password';
         }
-
         banner.classList.remove('show');
         checkAll();
       });
@@ -316,7 +439,6 @@
       updateRule('rule-len', rules.len);
       updateRule('rule-space', rules.space);
       updateRule('rule-digit', rules.digit);
-
       const isValid = rules.len && rules.space && rules.digit;
       const feedback = document.getElementById('usernameFeedback');
 
@@ -328,14 +450,14 @@
         usernameInput.classList.remove('valid', 'invalid');
         return value.length > 0;
       } else if (isValid) {
-        feedback.textContent = 'Username is valid';
+        feedback.textContent = 'Looks good';
         feedback.className = 'feedback success';
         usernameInput.classList.add('valid');
         usernameInput.classList.remove('invalid');
       } else {
-        let msg = !rules.len ? 'Username must be at least 8 characters long'
-                : !rules.space ? 'Username must not contain spaces'
-                : 'Username must not contain digits';
+        let msg = !rules.len ? 'At least 8 characters'
+                : !rules.space ? 'No spaces allowed'
+                : 'No digits allowed';
         feedback.textContent = msg;
         feedback.className = 'feedback error';
         usernameInput.classList.add('invalid');
@@ -353,7 +475,6 @@
       updateRule('rule-plen', rules.len);
       updateRule('rule-pdigit', rules.digit);
       updateRule('rule-pupper', rules.upper);
-
       const isValid = rules.len && rules.digit && rules.upper;
       const feedback = document.getElementById('passwordFeedback');
 
@@ -365,14 +486,14 @@
         passwordInput.classList.remove('valid', 'invalid');
         return value.length > 0;
       } else if (isValid) {
-        feedback.textContent = 'Password is valid';
+        feedback.textContent = 'Strong enough';
         feedback.className = 'feedback success';
         passwordInput.classList.add('valid');
         passwordInput.classList.remove('invalid');
       } else {
-        let msg = !rules.len ? 'Password must be at least 7 characters long'
-                : !rules.digit ? 'Password must contain at least one digit'
-                : 'Password must contain at least one uppercase letter';
+        let msg = !rules.len ? 'At least 7 characters'
+                : !rules.digit ? 'Add at least one digit'
+                : 'Add an uppercase letter';
         feedback.textContent = msg;
         feedback.className = 'feedback error';
         passwordInput.classList.add('invalid');
@@ -385,12 +506,11 @@
       if (mode === 'login') return true;
       const feedback = document.getElementById('confirmFeedback');
       const isValid = confirm.length > 0 && password === confirm;
-
       if (!confirm) {
         feedback.textContent = '';
         confirmInput.classList.remove('valid', 'invalid');
       } else if (isValid) {
-        feedback.textContent = 'Passwords match!';
+        feedback.textContent = 'Passwords match';
         feedback.className = 'feedback success';
         confirmInput.classList.add('valid');
         confirmInput.classList.remove('invalid');
@@ -439,14 +559,13 @@
     document.getElementById('validatorForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
-      submitBtn.textContent = mode === 'register' ? 'Registering...' : 'Logging in...';
+      submitBtn.textContent = mode === 'register' ? 'Creating account...' : 'Signing in...';
 
       const payload = {
         username: usernameInput.value.trim(),
         password: passwordInput.value,
         confirm: confirmInput.value
       };
-
       const endpoint = mode === 'register' ? '/api/register' : '/api/login';
 
       try {
@@ -459,17 +578,17 @@
         const data = await res.json();
 
         if (data.success) {
-          showBanner(data.message + ' Redirecting to quiz...', 'success');
+          showBanner(data.message + ' Opening quiz...', 'success');
           setTimeout(() => {
             window.location.href = data.redirect || '/quiz';
-          }, 800);
+          }, 700);
         } else {
           showBanner(data.error || 'Something went wrong', 'error');
           submitBtn.textContent = mode === 'register' ? 'Register & Start Quiz' : 'Login & Start Quiz';
           checkAll();
         }
       } catch (err) {
-        showBanner('Cannot reach server. Is the backend running?', 'error');
+        showBanner('Cannot reach server. Is it running?', 'error');
         submitBtn.textContent = mode === 'register' ? 'Register & Start Quiz' : 'Login & Start Quiz';
         checkAll();
       }

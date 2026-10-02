@@ -3,32 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Quiz Game</title>
+  <title>Py Quiz Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --border: #334155;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --success: #22c55e;
-      --error: #ef4444;
-      --warning: #f59e0b;
+      --bg-deep: #070b14;
+      --bg: #0c1220;
+      --card: rgba(18, 28, 48, 0.9);
+      --card-border: rgba(99, 140, 255, 0.12);
+      --border: #243044;
+      --text: #e8eef9;
+      --muted: #8b9bb8;
+      --primary: #4f8cff;
+      --primary-glow: rgba(79, 140, 255, 0.35);
+      --primary-hover: #3b7aef;
+      --success: #3ddc97;
+      --error: #ff6b7a;
+      --warning: #f5b942;
+      --radius: 18px;
+      --font: 'DM Sans', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      font-family: var(--font);
+      background: var(--bg-deep);
       min-height: 100vh;
       color: var(--text);
-      padding: 1.5rem;
+      padding: 1.25rem 1.25rem 2.5rem;
+      position: relative;
     }
 
-    .container { max-width: 640px; margin: 0 auto; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 40% at 10% 0%, rgba(79, 140, 255, 0.14), transparent 50%),
+        radial-gradient(ellipse 50% 35% at 100% 80%, rgba(61, 220, 151, 0.08), transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
     .topbar {
       display: flex;
@@ -36,28 +62,60 @@
       align-items: center;
       margin-bottom: 1.5rem;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
-    .topbar h1 { font-size: 1.4rem; }
-    .topbar .user { color: var(--muted); font-size: 0.9rem; }
-
-    .topbar-right {
+    .brand-row {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
 
-    .timer {
-      font-variant-numeric: tabular-nums;
+    .logo-sm {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(145deg, #4f8cff, #3066d0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: white;
+      box-shadow: 0 4px 14px var(--primary-glow);
+      flex-shrink: 0;
+    }
+
+    .topbar h1 {
+      font-size: 1.15rem;
       font-weight: 700;
-      font-size: 1.1rem;
-      padding: 0.4rem 0.85rem;
-      border-radius: 8px;
-      background: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .topbar .user {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 0.1rem;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .timer {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 10px;
+      background: rgba(7, 11, 20, 0.7);
       border: 1.5px solid var(--border);
       color: var(--text);
-      min-width: 4.5rem;
+      min-width: 4.25rem;
       text-align: center;
     }
 
@@ -70,109 +128,188 @@
     .timer.danger {
       border-color: var(--error);
       color: var(--error);
-      animation: pulse 0.6s ease infinite;
+      animation: pulse 0.55s ease infinite;
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+      50% { opacity: 0.65; }
     }
 
     .btn {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
       border: none;
+      font-family: var(--font);
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
+      transition: transform 0.12s, background 0.2s, border-color 0.2s, color 0.2s;
     }
 
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary {
+      background: linear-gradient(145deg, #5a95ff, #3b7aef);
+      color: white;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
     .btn-ghost {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
     }
-    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--text);
+      border-color: #3a4d6a;
+    }
+
+    .btn-ghost:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
 
     .card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.75rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-      margin-bottom: 1.25rem;
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.6rem 1.5rem;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 20px 40px -12px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1rem;
+    }
+
+    .progress-wrap {
+      margin-bottom: 1rem;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.45rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 500;
     }
 
     .progress {
-      height: 6px;
-      background: #0f172a;
-      border-radius: 3px;
-      margin-bottom: 1.25rem;
+      height: 7px;
+      background: rgba(7, 11, 20, 0.8);
+      border-radius: 4px;
       overflow: hidden;
+      border: 1px solid var(--border);
     }
 
     .progress-bar {
       height: 100%;
-      background: var(--primary);
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #3b7aef, #4f8cff);
+      transition: width 0.35s ease;
       width: 0%;
+      border-radius: 4px;
+    }
+
+    .dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.15rem;
+      justify-content: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .dot.answered { background: var(--primary); }
+    .dot.current {
+      background: var(--accent, #3ddc97);
+      transform: scale(1.25);
+      box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.25);
     }
 
     .q-num {
-      color: var(--muted);
-      font-size: 0.8rem;
-      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-size: 0.75rem;
+      margin-bottom: 0.55rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.08em;
+      font-weight: 600;
     }
 
     .q-text {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 600;
-      margin-bottom: 1.25rem;
-      line-height: 1.45;
+      margin-bottom: 1.35rem;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
     }
 
-    .options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .options { display: flex; flex-direction: column; gap: 0.55rem; }
 
     .option {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.85rem 1rem;
-      background: #0f172a;
+      gap: 0.85rem;
+      padding: 0.9rem 1rem;
+      background: rgba(7, 11, 20, 0.55);
       border: 1.5px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
+      transition: border-color 0.15s, background 0.15s, transform 0.12s;
     }
 
-    .option:hover { border-color: var(--primary); }
+    .option:hover {
+      border-color: #3a5a9a;
+      background: rgba(79, 140, 255, 0.06);
+    }
+
     .option.selected {
       border-color: var(--primary);
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(79, 140, 255, 0.12);
     }
 
     .option input { display: none; }
 
     .option .letter {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--border);
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 0.85rem;
+      font-family: var(--mono);
       flex-shrink: 0;
+      color: var(--muted);
     }
 
     .option.selected .letter {
       background: var(--primary);
       color: white;
+    }
+
+    .option .opt-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
     }
 
     .nav {
@@ -182,67 +319,97 @@
       margin-top: 1.5rem;
     }
 
-    .nav .btn { flex: 1; padding: 0.75rem; }
+    .nav .btn { flex: 1; padding: 0.8rem; }
 
     .result-score {
       text-align: center;
-      padding: 1.5rem 0;
+      padding: 0.5rem 0 1rem;
+    }
+
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #4f8cff, #3066d0);
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 24px var(--primary-glow);
     }
 
     .result-score .big {
-      font-size: 3rem;
+      font-size: 2.75rem;
       font-weight: 700;
-      color: var(--primary);
+      letter-spacing: -0.03em;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
     }
 
     .result-score .pct {
-      color: var(--muted);
-      margin-top: 0.25rem;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 0.2rem;
     }
 
-    .result-list { margin-top: 1.25rem; }
+    .result-list {
+      margin-top: 1rem;
+      border-top: 1px solid var(--border);
+      padding-top: 0.5rem;
+    }
 
     .result-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 0.15rem;
+      border-bottom: 1px solid rgba(36, 48, 68, 0.8);
       font-size: 0.9rem;
     }
 
     .result-item:last-child { border-bottom: none; }
-    .badge-ok { color: var(--success); }
-    .badge-no { color: var(--error); }
+    .badge-ok { color: var(--success); font-weight: 600; }
+    .badge-no { color: var(--error); font-weight: 600; }
 
     .hidden { display: none !important; }
 
-    .loading {
+    .loading, .error-box {
       text-align: center;
-      padding: 3rem;
+      padding: 2.5rem 1.5rem;
       color: var(--muted);
     }
 
     .error-box {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid var(--error);
+      background: rgba(255, 107, 122, 0.1);
+      border: 1px solid rgba(255, 107, 122, 0.3);
       color: var(--error);
-      border-radius: 10px;
-      padding: 1rem;
-      text-align: center;
+      border-radius: var(--radius);
+    }
+
+    .error-box a { color: var(--primary); font-weight: 600; }
+
+    @media (max-width: 480px) {
+      .q-text { font-size: 1.05rem; }
+      .card { padding: 1.25rem 1.1rem; }
+      .topbar h1 { font-size: 1.05rem; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
-      <div>
-        <h1>Python Quiz Game</h1>
-        <div class="user" id="userLabel">Loading...</div>
+      <div class="brand-row">
+        <div class="logo-sm">Py</div>
+        <div>
+          <h1>Py Quiz Game</h1>
+          <div class="user" id="userLabel">Loading...</div>
+        </div>
       </div>
       <div class="topbar-right">
-        <div class="timer hidden" id="timer">5:00</div>
-        <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+        <div class="timer hidden" id="timer" aria-live="polite">5:00</div>
+        <button type="button" class="btn btn-ghost" id="logoutBtn">Logout</button>
       </div>
     </div>
 
@@ -250,19 +417,27 @@
     <div id="authError" class="card error-box hidden">
       You need to log in first.
       <br /><br />
-      <a href="/" style="color: var(--primary)">Go to Register / Login</a>
+      <a href="/">Go to Register / Login</a>
     </div>
 
     <div id="quizArea" class="hidden">
-      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progressLabel">Question 1 of 10</span>
+          <span id="answeredCount">0 answered</span>
+        </div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+
+      <div class="dots" id="dots"></div>
 
       <div class="card" id="questionCard">
         <div class="q-num" id="qNum"></div>
         <div class="q-text" id="qText"></div>
         <div class="options" id="options"></div>
         <div class="nav">
-          <button class="btn btn-ghost" id="prevBtn">Previous</button>
-          <button class="btn btn-primary" id="nextBtn">Next</button>
+          <button type="button" class="btn btn-ghost" id="prevBtn">Previous</button>
+          <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
         </div>
       </div>
     </div>
@@ -270,22 +445,23 @@
     <div id="resultArea" class="hidden">
       <div class="card">
         <div class="result-score">
+          <div class="result-badge" id="resultBadge">🏆</div>
           <div class="big" id="scoreBig">0/10</div>
           <div class="pct" id="scorePct">0%</div>
           <p style="margin-top: 0.75rem; color: var(--muted)" id="scoreMsg"></p>
-          <p style="margin-top: 0.35rem; color: var(--muted); font-size: 0.9rem" id="timeMsg"></p>
+          <p style="margin-top: 0.35rem; color: var(--muted); font-size: 0.88rem" id="timeMsg"></p>
         </div>
         <div class="result-list" id="resultList"></div>
-        <div class="nav" style="margin-top: 1.5rem">
-          <button class="btn btn-primary" id="retryBtn">Try Again</button>
-          <button class="btn btn-ghost" id="homeBtn">Home</button>
+        <div class="nav" style="margin-top: 1.35rem">
+          <button type="button" class="btn btn-primary" id="retryBtn">Try Again</button>
+          <button type="button" class="btn btn-ghost" id="homeBtn">Home</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const QUIZ_SECONDS = 5 * 60;  // 5 minutes
+    const QUIZ_SECONDS = 5 * 60;
 
     let questions = [];
     let current = 0;
@@ -293,7 +469,6 @@
     let timeLeft = QUIZ_SECONDS;
     let timerId = null;
     let submitting = false;
-    let timedOut = false;
 
     function escapeHtml(str) {
       const div = document.createElement('div');
@@ -318,17 +493,14 @@
     function startTimer() {
       stopTimer();
       timeLeft = QUIZ_SECONDS;
-      timedOut = false;
       const el = document.getElementById('timer');
       el.classList.remove('hidden');
       updateTimerDisplay();
-
       timerId = setInterval(() => {
         timeLeft--;
         updateTimerDisplay();
         if (timeLeft <= 0) {
           stopTimer();
-          timedOut = true;
           submitQuiz(true);
         }
       }, 1000);
@@ -339,6 +511,17 @@
         clearInterval(timerId);
         timerId = null;
       }
+    }
+
+    function renderDots() {
+      const dots = document.getElementById('dots');
+      dots.innerHTML = questions.map((q, i) => {
+        const id = String(q.id);
+        let cls = 'dot';
+        if (i === current) cls += ' current';
+        else if (answers[id]) cls += ' answered';
+        return `<span class="${cls}" title="Question ${i + 1}"></span>`;
+      }).join('');
     }
 
     async function checkAuth() {
@@ -376,10 +559,18 @@
 
     function renderQuestion() {
       const q = questions[current];
-      document.getElementById('qNum').textContent = `Question ${current + 1} of ${questions.length}`;
+      const answered = Object.keys(answers).length;
+
+      document.getElementById('qNum').textContent = `Question ${current + 1}`;
       document.getElementById('qText').textContent = q.question;
+      document.getElementById('progressLabel').textContent =
+        `Question ${current + 1} of ${questions.length}`;
+      document.getElementById('answeredCount').textContent =
+        `${answered} answered`;
       document.getElementById('progressBar').style.width =
         ((current + 1) / questions.length * 100) + '%';
+
+      renderDots();
 
       const opts = document.getElementById('options');
       opts.innerHTML = '';
@@ -390,7 +581,7 @@
         div.innerHTML = `
           <input type="radio" name="q" value="${letter}" ${selected ? 'checked' : ''} />
           <span class="letter">${letter.toUpperCase()}</span>
-          <span>${escapeHtml(text)}</span>
+          <span class="opt-text">${escapeHtml(text)}</span>
         `;
         div.addEventListener('click', () => {
           answers[String(q.id)] = letter;
@@ -401,11 +592,7 @@
 
       document.getElementById('prevBtn').disabled = current === 0;
       const nextBtn = document.getElementById('nextBtn');
-      if (current === questions.length - 1) {
-        nextBtn.textContent = 'Submit Quiz';
-      } else {
-        nextBtn.textContent = 'Next';
-      }
+      nextBtn.textContent = current === questions.length - 1 ? 'Submit Quiz' : 'Next';
     }
 
     async function submitQuiz(fromTimeout) {
@@ -415,7 +602,7 @@
 
       const nextBtn = document.getElementById('nextBtn');
       nextBtn.disabled = true;
-      nextBtn.textContent = fromTimeout ? 'Time\'s up! Submitting...' : 'Submitting...';
+      nextBtn.textContent = fromTimeout ? "Time's up!" : 'Submitting...';
 
       const usedSeconds = QUIZ_SECONDS - Math.max(0, timeLeft);
 
@@ -435,18 +622,22 @@
           document.getElementById('scoreBig').textContent = `${data.score}/${data.total}`;
           document.getElementById('scorePct').textContent = `${data.percentage}%`;
 
+          const badge = document.getElementById('resultBadge');
+          if (data.percentage >= 80) badge.textContent = '🏆';
+          else if (data.percentage >= 50) badge.textContent = '👍';
+          else badge.textContent = '📚';
+
           let msg = data.message;
           if (fromTimeout) msg = 'Time ran out! ' + msg;
           document.getElementById('scoreMsg').textContent = msg;
           document.getElementById('timeMsg').textContent =
             'Time used: ' + formatTime(usedSeconds) + ' / ' + formatTime(QUIZ_SECONDS);
 
-          const list = document.getElementById('resultList');
-          list.innerHTML = data.results.map(r => `
+          document.getElementById('resultList').innerHTML = data.results.map(r => `
             <div class="result-item">
-              <span>Q${r.id}</span>
+              <span>Question ${r.id}</span>
               <span class="${r.correct ? 'badge-ok' : 'badge-no'}">
-                ${r.correct ? '✓ Correct' : `✗ Correct: ${r.correct_answer.toUpperCase()}`}
+                ${r.correct ? '✓ Correct' : '✗ Answer: ' + r.correct_answer.toUpperCase()}
               </span>
             </div>
           `).join('');
