@@ -1,55 +1,80 @@
-# User Validator + Python Quiz
+# Py Quiz Game
 
-Register or login with validated credentials, then take an interactive Python basics quiz.
+An interactive **Python basics quiz** with account registration, login, a welcome home screen, a timed challenge, and saved scores.
 
 ## Features
 
-- **Username & password validation** (same rules as before)
-- **Register / Login** with hashed passwords (SQLite)
-- **Python Quiz** — 10 multiple-choice questions
-- **Scores saved** per user in the database
-- Must be logged in to play the quiz
+- **Create account / Sign in** with live username & password validation
+- **Welcome home page** with how-to-play instructions
+- **10 multiple-choice** Python questions
+- **5-minute countdown timer** (auto-submits when time runs out)
+- **Progress bar** and question step indicators
+- **Results screen** with score percentage and per-question review
+- **Passwords hashed** and stored in **SQLite**
+- Scores saved per user in the database
 
-## Quick Start
+## How to run
 
 ```bash
 pip install -r requirements.txt
 python3 app.py
 ```
 
-Open: **http://127.0.0.1:5000**
+Open in your browser:
 
-1. Register a new account (or login)
-2. You’re taken to the quiz automatically
-3. Answer the questions and submit
-4. See your score
+**http://127.0.0.1:5000**
 
-## Validation Rules
+### Flow
 
-**Username:** 8+ characters, no spaces, no digits  
-**Password:** 7+ characters, at least one digit, at least one uppercase letter
+1. **Create account** or **Sign in**
+2. Land on the **Home** page (welcome + instructions)
+3. Click **Start quiz**
+4. Answer 10 questions within 5 minutes
+5. View your score and correct answers
 
-## Project Structure
+## Validation rules
+
+| Field | Rules |
+|-------|--------|
+| **Username** | At least 8 characters, no spaces, no digits |
+| **Password** | At least 7 characters, at least one digit, at least one uppercase letter |
+
+## Project structure
 
 ```
-User--Validator/
-├── app.py                  # Flask backend (auth + quiz API)
-├── index.html              # Register / Login page
-├── quiz.html               # Interactive quiz
-├── username_password.py    # Original CLI validator
-├── requirements.txt
-├── users.db                # Created on first run
+py-quiz-game1/
+├── app.py                  # Flask backend (auth, routes, quiz API)
+├── index.html              # Create account / Sign in
+├── home.html               # Welcome page + how to play
+├── quiz.html               # Timed quiz + results
+├── username_password.py    # Original CLI validator (optional)
+├── requirements.txt        # flask, flask-cors
+├── users.db                # Created automatically on first run
 └── README.md
 ```
 
-## API (overview)
+## Main routes
 
-| Endpoint | Description |
-|----------|-------------|
-| POST `/api/register` | Register + start session |
-| POST `/api/login` | Login + start session |
-| POST `/api/logout` | End session |
-| GET `/api/me` | Current user |
-| GET `/api/quiz/questions` | Quiz questions (login required) |
-| POST `/api/quiz/submit` | Submit answers, save score |
-| GET `/api/quiz/my-scores` | Your past scores |
+| Route | Description |
+|-------|-------------|
+| `GET /` | Sign in / register page |
+| `POST /auth/register` | Create account → redirect to `/home` |
+| `POST /auth/login` | Sign in → redirect to `/home` |
+| `GET /home` | Welcome + instructions (login required) |
+| `GET /quiz` | Quiz challenge (login required) |
+
+## API overview
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/me` | Current logged-in user |
+| `POST` | `/api/logout` | End session |
+| `GET` | `/api/quiz/questions` | Quiz questions (no answers) |
+| `POST` | `/api/quiz/submit` | Submit answers, save score |
+| `GET` | `/api/quiz/my-scores` | Your past scores |
+
+## Notes
+
+- Use **http://127.0.0.1:5000** (served by Flask), not opening HTML files directly.
+- `users.db` is created on first run; do not commit it if it contains real passwords.
+- This is a learning/demo project — not production-hardened security.
