@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Py Quiz — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #09090b;
+      --surface: #111113;
+      --surface-2: #18181b;
+      --border: #27272a;
+      --border-strong: #3f3f46;
+      --text: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-tertiary: #71717a;
+      --primary: #6366f1;
+      --primary-hover: #818cf8;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      padding: 24px 16px 48px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .bg-mesh {
+      position: fixed; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 55% 45% at 50% -15%, rgba(99,102,241,0.18), transparent);
+    }
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 520px; margin: 0 auto;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(145deg, #6366f1, #4f46e5);
+      display: grid; place-items: center;
+      box-shadow: 0 2px 12px rgba(99,102,241,0.3);
+    }
+    .mark svg { width: 18px; height: 18px; }
+    .header h1 { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.02em; }
+    .header .sub { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px; }
+    .btn {
+      height: 36px; padding: 0 14px; border-radius: 8px;
+      font-family: var(--font); font-size: 0.8125rem; font-weight: 600;
+      cursor: pointer; border: 1px solid transparent;
+    }
+    .btn-ghost {
+      background: transparent; border-color: var(--border); color: var(--text-secondary);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+    .btn-primary {
+      background: var(--primary); color: white; border: none;
+      height: 48px; width: 100%; font-size: 0.9375rem;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px 24px; box-shadow: var(--shadow);
+    }
+    .welcome {
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+    .welcome span { color: var(--primary); }
+    .lede {
+      font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.55;
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--text-tertiary); margin-bottom: 12px;
+    }
+    .steps { list-style: none; margin-bottom: 28px; }
+    .steps li {
+      display: flex; gap: 14px; margin-bottom: 14px;
+      font-size: 0.9rem; line-height: 1.45; color: var(--text-secondary);
+    }
+    .steps li:last-child { margin-bottom: 0; }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: var(--surface-2); border: 1px solid var(--border);
+      display: grid; place-items: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--primary);
+    }
+    .facts {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+      margin-bottom: 28px;
+    }
+    .fact {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 12px; text-align: center;
+    }
+    .fact strong {
+      display: block; font-size: 1.125rem; font-weight: 700;
+      letter-spacing: -0.02em; margin-bottom: 4px;
+    }
+    .fact span { font-size: 0.75rem; color: var(--text-tertiary); }
+    @media (max-width: 420px) {
+      .facts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="header">
+      <div class="header-left">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h1>Py Quiz</h1>
+          <div class="sub" id="userLabel">Loading…</div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost" id="logoutBtn">Sign out</button>
+    </header>
+
+    <div class="panel">
+      <h2 class="welcome">Welcome, <span id="nameSpot">player</span></h2>
+      <p class="lede">
+        You’re signed in. Read the quick guide below, then start when you’re ready.
+      </p>
+
+      <div class="section-title">How to play</div>
+      <ul class="steps">
+        <li>
+          <span class="step-num">1</span>
+          <span>You’ll get <strong style="color:var(--text)">10 multiple-choice</strong> questions about Python basics.</span>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <span>You have <strong style="color:var(--text)">5 minutes</strong>. The timer starts when you begin — it auto-submits at 0:00.</span>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <span>Pick one answer per question. Use <strong style="color:var(--text)">Back</strong> / <strong style="color:var(--text)">Continue</strong> to move around.</span>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <span>On the last question, press <strong style="color:var(--text)">Submit</strong> to see your score and correct answers.</span>
+        </li>
+      </ul>
+
+      <div class="facts">
+        <div class="fact"><strong>10</strong><span>Questions</span></div>
+        <div class="fact"><strong>5:00</strong><span>Time limit</span></div>
+        <div class="fact"><strong>A B C</strong><span>Choices</span></div>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="startBtn">Start quiz</button>
+    </div>
+  </div>
+
+  <script>
+    async function loadUser() {
+      try {
+        const res = await fetch('/api/me', { credentials: 'same-origin' });
+        const data = await res.json();
+        if (!data.logged_in) {
+          window.location.href = '/';
+          return;
+        }
+        document.getElementById('userLabel').textContent = data.username;
+        document.getElementById('nameSpot').textContent = data.username;
+      } catch {
+        window.location.href = '/';
+      }
+    }
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      window.location.href = '/quiz';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
+      window.location.href = '/';
+    });
+
+    loadUser();
+  </script>
+</body>
+</html>

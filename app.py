@@ -5,7 +5,6 @@ from flask import (
     send_from_directory,
     session,
     redirect,
-    url_for,
     flash,
     get_flashed_messages,
 )
@@ -164,18 +163,25 @@ def start_session(user_id, username):
 
 @app.route("/")
 def index():
+    # Already logged in? Skip login screen
+    if "user_id" in session:
+        return redirect("/home")
     return send_from_directory(".", "index.html")
+
+
+@app.route("/home")
+def home_page():
+    if "user_id" not in session:
+        return redirect("/")
+    return send_from_directory(".", "home.html")
 
 
 @app.route("/quiz")
 def quiz_page():
-    # If not logged in, send them home
     if "user_id" not in session:
         return redirect("/")
     return send_from_directory(".", "quiz.html")
 
-
-# ---------- Form POST (reliable redirect) ----------
 
 @app.route("/auth/register", methods=["POST"])
 def auth_register():
@@ -216,7 +222,7 @@ def auth_register():
     conn.close()
 
     start_session(user_id, username)
-    return redirect("/quiz")
+    return redirect("/home")
 
 
 @app.route("/auth/login", methods=["POST"])
@@ -239,7 +245,7 @@ def auth_login():
         return redirect("/")
 
     start_session(user["id"], user["username"])
-    return redirect("/quiz")
+    return redirect("/home")
 
 
 @app.route("/api/flash", methods=["GET"])
@@ -247,8 +253,6 @@ def api_flash():
     messages = get_flashed_messages(with_categories=True)
     return jsonify({"messages": [{"category": c, "text": t} for c, t in messages]})
 
-
-# ---------- JSON API (kept for quiz) ----------
 
 @app.route("/api/register", methods=["POST"])
 def register():
@@ -290,7 +294,7 @@ def register():
         "success": True,
         "message": f"Welcome, {username}!",
         "username": username,
-        "redirect": "/quiz",
+        "redirect": "/home",
     }), 201
 
 
@@ -317,7 +321,7 @@ def login():
         "success": True,
         "message": f"Welcome back, {username}!",
         "username": username,
-        "redirect": "/quiz",
+        "redirect": "/home",
     })
 
 
