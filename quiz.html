@@ -23,381 +23,114 @@
       --success: #22c55e;
       --error: #ef4444;
       --warning: #eab308;
-      --ring: rgba(99, 102, 241, 0.35);
       --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 40px -12px rgba(0,0,0,0.55);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: var(--font);
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-      padding: 20px 16px 48px;
-      -webkit-font-smoothing: antialiased;
+      font-family: var(--font); background: var(--bg); min-height: 100vh; color: var(--text);
+      padding: 20px 16px 48px; -webkit-font-smoothing: antialiased;
     }
-
     .bg-mesh {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 50% 40% at 50% -15%, rgba(99, 102, 241, 0.16), transparent),
-        radial-gradient(ellipse 35% 25% at 100% 60%, rgba(99, 102, 241, 0.05), transparent);
+      position: fixed; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 50% 40% at 50% -15%, rgba(99,102,241,0.16), transparent);
     }
-
-    .wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 560px;
-      margin: 0 auto;
-    }
-
-    /* Header */
+    .wrap { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
     }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .header-left { display: flex; align-items: center; gap: 12px; }
     .mark {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 36px; height: 36px; border-radius: 10px;
       background: linear-gradient(145deg, #6366f1, #4f46e5);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
-      flex-shrink: 0;
+      display: grid; place-items: center; flex-shrink: 0;
     }
-
     .mark svg { width: 18px; height: 18px; }
-
-    .header h1 {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    .header .sub {
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-      margin-top: 2px;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .header h1 { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.02em; }
+    .header .sub { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
     .timer {
-      font-variant-numeric: tabular-nums;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      padding: 8px 12px;
-      border-radius: 8px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      min-width: 58px;
-      text-align: center;
+      font-variant-numeric: tabular-nums; font-size: 0.8125rem; font-weight: 600;
+      padding: 8px 12px; border-radius: 8px; background: var(--surface-2);
+      border: 1px solid var(--border); min-width: 58px; text-align: center;
     }
-
-    .timer.warn {
-      color: var(--warning);
-      border-color: rgba(234, 179, 8, 0.4);
-    }
-
-    .timer.danger {
-      color: var(--error);
-      border-color: rgba(239, 68, 68, 0.45);
-      animation: blink 0.7s ease infinite;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0.7; }
-    }
-
+    .timer.warn { color: var(--warning); border-color: rgba(234,179,8,0.4); }
+    .timer.danger { color: var(--error); border-color: rgba(239,68,68,0.45); animation: blink 0.7s ease infinite; }
+    @keyframes blink { 50% { opacity: 0.7; } }
     .btn {
-      height: 36px;
-      padding: 0 14px;
-      border-radius: 8px;
-      font-family: var(--font);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+      height: 36px; padding: 0 14px; border-radius: 8px; font-family: var(--font);
+      font-size: 0.8125rem; font-weight: 600; cursor: pointer; border: 1px solid transparent;
     }
-
-    .btn-ghost {
-      background: transparent;
-      border-color: var(--border);
-      color: var(--text-secondary);
-    }
-
-    .btn-ghost:hover:not(:disabled) {
-      color: var(--text);
-      border-color: var(--border-strong);
-      background: var(--surface-2);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      border-color: transparent;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
-    }
-
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
+    .btn-ghost { background: transparent; border-color: var(--border); color: var(--text-secondary); }
+    .btn-ghost:hover:not(:disabled) { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: var(--shadow);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 24px; box-shadow: var(--shadow);
     }
-
-    /* Progress */
-    .progress-block {
-      margin-bottom: 20px;
-    }
-
+    .progress-block { margin-bottom: 20px; }
     .progress-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-tertiary);
+      display: flex; justify-content: space-between; margin-bottom: 8px;
+      font-size: 0.75rem; font-weight: 500; color: var(--text-tertiary);
     }
-
-    .track {
-      height: 4px;
-      background: var(--surface-2);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .track > div {
-      height: 100%;
-      width: 0%;
-      background: var(--primary);
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    .steps {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .step {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--border-strong);
-      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    }
-
+    .track { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+    .track > div { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
+    .steps { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .step { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); }
     .step.done { background: var(--primary); }
-    .step.active {
-      background: var(--text);
-      transform: scale(1.35);
-      box-shadow: 0 0 0 3px var(--primary-muted);
-    }
-
+    .step.active { background: var(--text); transform: scale(1.35); box-shadow: 0 0 0 3px var(--primary-muted); }
     .q-label {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--primary);
-      margin-bottom: 10px;
+      font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--primary); margin-bottom: 10px;
     }
-
     .q-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      letter-spacing: -0.025em;
-      line-height: 1.45;
-      margin-bottom: 22px;
+      font-size: 1.125rem; font-weight: 600; letter-spacing: -0.025em;
+      line-height: 1.45; margin-bottom: 22px;
     }
-
     .choices { display: flex; flex-direction: column; gap: 8px; }
-
     .choice {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px 16px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;
     }
-
-    .choice:hover {
-      border-color: var(--border-strong);
-      background: var(--surface-2);
-    }
-
-    .choice.selected {
-      border-color: var(--primary);
-      background: var(--primary-muted);
-      box-shadow: 0 0 0 1px var(--primary);
-    }
-
+    .choice:hover { border-color: var(--border-strong); background: var(--surface-2); }
+    .choice.selected { border-color: var(--primary); background: var(--primary-muted); box-shadow: 0 0 0 1px var(--primary); }
     .choice input { display: none; }
-
     .choice .key {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      display: grid;
-      place-items: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 8px; background: var(--surface-2);
+      border: 1px solid var(--border); display: grid; place-items: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); flex-shrink: 0;
     }
-
-    .choice.selected .key {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
-
-    .choice .label {
-      font-size: 0.9375rem;
-      line-height: 1.45;
-      padding-top: 3px;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .actions .btn {
-      height: 44px;
-      width: 100%;
-    }
-
-    /* Results */
-    .result-hero {
-      text-align: center;
-      padding: 8px 0 20px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 8px;
-    }
-
+    .choice.selected .key { background: var(--primary); border-color: var(--primary); color: white; }
+    .choice .label { font-size: 0.9375rem; line-height: 1.45; padding-top: 3px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+    .actions .btn { height: 44px; width: 100%; }
+    .result-hero { text-align: center; padding: 8px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
     .result-ring {
-      width: 88px;
-      height: 88px;
-      margin: 0 auto 16px;
-      border-radius: 50%;
+      width: 88px; height: 88px; margin: 0 auto 16px; border-radius: 50%;
       background: conic-gradient(var(--primary) var(--pct, 0%), var(--border) 0);
-      display: grid;
-      place-items: center;
-      position: relative;
+      display: grid; place-items: center; position: relative;
     }
-
-    .result-ring::before {
-      content: '';
-      position: absolute;
-      inset: 6px;
-      border-radius: 50%;
-      background: var(--surface);
-    }
-
-    .result-ring span {
-      position: relative;
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .result-hero h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .result-hero p {
-      margin-top: 6px;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
+    .result-ring::before { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--surface); }
+    .result-ring span { position: relative; font-size: 1.25rem; font-weight: 700; }
+    .result-hero h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; }
+    .result-hero p { margin-top: 6px; font-size: 0.875rem; color: var(--text-secondary); }
     .result-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 4px;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.875rem;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 4px; border-bottom: 1px solid var(--border); font-size: 0.875rem;
     }
-
     .result-row:last-child { border-bottom: none; }
-
     .tag-ok { color: var(--success); font-weight: 600; font-size: 0.8125rem; }
     .tag-no { color: var(--error); font-weight: 600; font-size: 0.8125rem; }
-
-    .state {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-    }
-
-    .state a {
-      color: var(--primary);
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .state a:hover { text-decoration: underline; }
-
+    .state { text-align: center; padding: 48px 24px; color: var(--text-secondary); font-size: 0.875rem; }
+    .state a { color: var(--primary); font-weight: 600; text-decoration: none; }
     .hidden { display: none !important; }
-
-    @media (max-width: 480px) {
-      .panel { padding: 20px 16px; }
-      .q-title { font-size: 1.05rem; }
-    }
   </style>
 </head>
 <body>
   <div class="bg-mesh" aria-hidden="true"></div>
-
   <div class="wrap">
     <header class="header">
       <div class="header-left">
@@ -419,7 +152,6 @@
     </header>
 
     <div id="loading" class="panel state">Loading challenge…</div>
-
     <div id="authError" class="panel state hidden">
       Session expired or not signed in.<br /><br />
       <a href="/">Go to sign in</a>
@@ -433,9 +165,7 @@
         </div>
         <div class="track"><div id="progressBar"></div></div>
       </div>
-
       <div class="steps" id="steps" aria-hidden="true"></div>
-
       <div class="panel">
         <div class="q-label" id="qNum">Question 1</div>
         <div class="q-title" id="qText"></div>
@@ -480,11 +210,9 @@
       d.textContent = str;
       return d.innerHTML;
     }
-
     function formatTime(secs) {
       return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
     }
-
     function updateTimerDisplay() {
       const el = document.getElementById('timer');
       el.textContent = formatTime(timeLeft);
@@ -492,7 +220,6 @@
       if (timeLeft <= 30) el.classList.add('danger');
       else if (timeLeft <= 60) el.classList.add('warn');
     }
-
     function startTimer() {
       stopTimer();
       timeLeft = QUIZ_SECONDS;
@@ -501,29 +228,23 @@
       timerId = setInterval(() => {
         timeLeft--;
         updateTimerDisplay();
-        if (timeLeft <= 0) {
-          stopTimer();
-          submitQuiz(true);
-        }
+        if (timeLeft <= 0) { stopTimer(); submitQuiz(true); }
       }, 1000);
     }
-
     function stopTimer() {
       if (timerId) { clearInterval(timerId); timerId = null; }
     }
-
     function renderSteps() {
       document.getElementById('steps').innerHTML = questions.map((q, i) => {
         let cls = 'step';
         if (i === current) cls += ' active';
         else if (answers[String(q.id)]) cls += ' done';
-        return `<span class="${cls}"></span>`;
+        return '<span class="' + cls + '"></span>';
       }).join('');
     }
-
     async function checkAuth() {
       try {
-        const res = await fetch('/api/me', { credentials: 'include' });
+        const res = await fetch('/api/me', { credentials: 'same-origin' });
         const data = await res.json();
         if (!data.logged_in) {
           document.getElementById('loading').classList.add('hidden');
@@ -538,9 +259,8 @@
         return false;
       }
     }
-
     async function loadQuestions() {
-      const res = await fetch('/api/quiz/questions', { credentials: 'include' });
+      const res = await fetch('/api/quiz/questions', { credentials: 'same-origin' });
       if (res.status === 401) {
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('authError').classList.remove('hidden');
@@ -553,139 +273,96 @@
       renderQuestion();
       startTimer();
     }
-
     function renderQuestion() {
       const q = questions[current];
       const answered = Object.keys(answers).length;
-
       document.getElementById('qNum').textContent = 'Question ' + (current + 1);
       document.getElementById('qText').textContent = q.question;
-      document.getElementById('progressLabel').textContent =
-        'Question ' + (current + 1) + ' of ' + questions.length;
+      document.getElementById('progressLabel').textContent = 'Question ' + (current + 1) + ' of ' + questions.length;
       document.getElementById('answeredCount').textContent = answered + ' answered';
-      document.getElementById('progressBar').style.width =
-        ((current + 1) / questions.length * 100) + '%';
-
+      document.getElementById('progressBar').style.width = ((current + 1) / questions.length * 100) + '%';
       renderSteps();
-
       const opts = document.getElementById('options');
       opts.innerHTML = '';
       for (const [letter, text] of Object.entries(q.options)) {
         const selected = answers[String(q.id)] === letter;
         const el = document.createElement('label');
         el.className = 'choice' + (selected ? ' selected' : '');
-        el.innerHTML = `
-          <input type="radio" name="q" value="${letter}" ${selected ? 'checked' : ''} />
-          <span class="key">${letter.toUpperCase()}</span>
-          <span class="label">${escapeHtml(text)}</span>
-        `;
-        el.addEventListener('click', () => {
-          answers[String(q.id)] = letter;
-          renderQuestion();
-        });
+        el.innerHTML = '<input type="radio" name="q" value="' + letter + '" ' + (selected ? 'checked' : '') + ' />' +
+          '<span class="key">' + letter.toUpperCase() + '</span>' +
+          '<span class="label">' + escapeHtml(text) + '</span>';
+        el.addEventListener('click', () => { answers[String(q.id)] = letter; renderQuestion(); });
         opts.appendChild(el);
       }
-
       document.getElementById('prevBtn').disabled = current === 0;
-      document.getElementById('nextBtn').textContent =
-        current === questions.length - 1 ? 'Submit' : 'Continue';
+      document.getElementById('nextBtn').textContent = current === questions.length - 1 ? 'Submit' : 'Continue';
     }
-
     async function submitQuiz(fromTimeout) {
       if (submitting) return;
       submitting = true;
       stopTimer();
-
       const nextBtn = document.getElementById('nextBtn');
       nextBtn.disabled = true;
       nextBtn.textContent = fromTimeout ? 'Time up…' : 'Submitting…';
-
       const used = QUIZ_SECONDS - Math.max(0, timeLeft);
-
       try {
         const res = await fetch('/api/quiz/submit', {
           method: 'POST',
-          credentials: 'include',
+          credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ answers })
         });
         const data = await res.json();
-
         if (data.success) {
           document.getElementById('quizArea').classList.add('hidden');
           document.getElementById('timer').classList.add('hidden');
           document.getElementById('resultArea').classList.remove('hidden');
-
           document.getElementById('scoreBig').textContent = data.score + ' / ' + data.total;
           document.getElementById('scorePct').textContent = Math.round(data.percentage) + '%';
           document.getElementById('resultRing').style.setProperty('--pct', data.percentage + '%');
-
           let msg = data.message;
           if (fromTimeout) msg = 'Time ran out. ' + msg;
           document.getElementById('scoreMsg').textContent = msg;
-          document.getElementById('timeMsg').textContent =
-            'Time used: ' + formatTime(used) + ' of ' + formatTime(QUIZ_SECONDS);
-
-          document.getElementById('resultList').innerHTML = data.results.map(r => `
-            <div class="result-row">
-              <span>Question ${r.id}</span>
-              <span class="${r.correct ? 'tag-ok' : 'tag-no'}">
-                ${r.correct ? 'Correct' : 'Answer ' + r.correct_answer.toUpperCase()}
-              </span>
-            </div>
-          `).join('');
+          document.getElementById('timeMsg').textContent = 'Time used: ' + formatTime(used) + ' of ' + formatTime(QUIZ_SECONDS);
+          document.getElementById('resultList').innerHTML = data.results.map(r =>
+            '<div class="result-row"><span>Question ' + r.id + '</span><span class="' +
+            (r.correct ? 'tag-ok' : 'tag-no') + '">' +
+            (r.correct ? 'Correct' : 'Answer ' + r.correct_answer.toUpperCase()) +
+            '</span></div>'
+          ).join('');
         } else {
           alert(data.error || 'Submit failed');
-          nextBtn.disabled = false;
-          nextBtn.textContent = 'Submit';
-          submitting = false;
+          nextBtn.disabled = false; nextBtn.textContent = 'Submit'; submitting = false;
         }
       } catch {
         alert('Could not reach server');
-        nextBtn.disabled = false;
-        nextBtn.textContent = 'Submit';
-        submitting = false;
+        nextBtn.disabled = false; nextBtn.textContent = 'Submit'; submitting = false;
       }
     }
-
     document.getElementById('prevBtn').addEventListener('click', () => {
       if (current > 0) { current--; renderQuestion(); }
     });
-
     document.getElementById('nextBtn').addEventListener('click', async () => {
-      if (current < questions.length - 1) {
-        current++;
-        renderQuestion();
-        return;
-      }
+      if (current < questions.length - 1) { current++; renderQuestion(); return; }
       await submitQuiz(false);
     });
-
     document.getElementById('retryBtn').addEventListener('click', () => {
-      current = 0;
-      answers = {};
-      submitting = false;
+      current = 0; answers = {}; submitting = false;
       document.getElementById('resultArea').classList.add('hidden');
       document.getElementById('quizArea').classList.remove('hidden');
       document.getElementById('nextBtn').disabled = false;
-      renderQuestion();
-      startTimer();
+      renderQuestion(); startTimer();
     });
-
     document.getElementById('homeBtn').addEventListener('click', () => {
       stopTimer();
-      window.location.href = '/';
+      window.location.href = '/home';
     });
-
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       stopTimer();
-      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
       window.location.href = '/';
     });
-
-    (async () => {
-      if (await checkAuth()) await loadQuestions();
-    })();
+    (async () => { if (await checkAuth()) await loadQuestions(); })();
   </script>
 </body>
 </html>
