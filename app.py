@@ -3,10 +3,21 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
+from datetime import timedelta
 from functools import wraps
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me-in-production")
+
+# Session cookie settings (local development)
+app.config.update(
+    SESSION_COOKIE_NAME="pyquiz_session",
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=False,  # True only behind HTTPS
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+)
+
 CORS(app, supports_credentials=True)
 
 DB_PATH = "users.db"
@@ -135,6 +146,13 @@ def login_required(f):
     return decorated
 
 
+def start_session(user_id, username):
+    session.clear()
+    session.permanent = True
+    session["user_id"] = user_id
+    session["username"] = username
+
+
 @app.route("/")
 def index():
     return send_from_directory(".", "index.html")
@@ -147,7 +165,7 @@ def quiz_page():
 
 @app.route("/api/register", methods=["POST"])
 def register():
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     username = (data.get("username") or "").strip()
     password = data.get("password") or ""
     confirm = data.get("confirm") or ""
@@ -181,8 +199,7 @@ def register():
     conn.commit()
     conn.close()
 
-    session["user_id"] = user_id
-    session["username"] = username
+    start_session(user_id, username)
 
     return jsonify({
         "success": True,
@@ -194,7 +211,7 @@ def register():
 
 @app.route("/api/login", methods=["POST"])
 def login():
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     username = (data.get("username") or "").strip()
     password = data.get("password") or ""
 
@@ -210,8 +227,7 @@ def login():
     if not user or not check_password_hash(user["password_hash"], password):
         return jsonify({"success": False, "error": "Invalid username or password"}), 401
 
-    session["user_id"] = user["id"]
-    session["username"] = user["username"]
+    start_session(user["id"], user["username"])
 
     return jsonify({
         "success": True,
@@ -242,7 +258,6 @@ def me():
 @app.route("/api/quiz/questions", methods=["GET"])
 @login_required
 def get_questions():
-    # Return questions without answers
     safe = [
         {
             "id": q["id"],
@@ -257,8 +272,8 @@ def get_questions():
 @app.route("/api/quiz/submit", methods=["POST"])
 @login_required
 def submit_quiz():
-    data = request.get_json() or {}
-    answers = data.get("answers") or {}  # {"1": "b", "2": "a", ...}
+    data = request.get_json(silent=True) or {}
+    answers = data.get("answers") or {}
 
     score = 0
     results = []
